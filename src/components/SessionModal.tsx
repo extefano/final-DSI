@@ -4,11 +4,14 @@ import {
   Copy,
   Download,
   Link as LinkIcon,
+  Plus,
   RotateCcw,
+  Trash2,
   Upload,
+  Users,
   X,
 } from 'lucide-react';
-import type { ProgressState, ThemeMode } from '../types/dsi';
+import type { ProgressState, StudyProfile, ThemeMode } from '../types/dsi';
 import {
   buildSessionShareUrl,
   decodeSessionCode,
@@ -18,6 +21,11 @@ import {
 interface SessionModalProps {
   open: boolean;
   onClose: () => void;
+  profiles: StudyProfile[];
+  activeProfile: StudyProfile;
+  onSwitchProfile: (profileId: string) => void;
+  onCreateProfile: (name: string) => void;
+  onDeleteProfile: (profileId: string) => void;
   progress: ProgressState;
   theme: ThemeMode;
   onImportState: (incoming: ProgressState, incomingTheme?: ThemeMode) => void;
@@ -27,6 +35,11 @@ interface SessionModalProps {
 export function SessionModal({
   open,
   onClose,
+  profiles,
+  activeProfile,
+  onSwitchProfile,
+  onCreateProfile,
+  onDeleteProfile,
   progress,
   theme,
   onImportState,
@@ -36,6 +49,7 @@ export function SessionModal({
   const [shareUrl, setShareUrl] = useState<string>('');
   const [copiedTarget, setCopiedTarget] = useState<'code' | 'url' | null>(null);
   const [pasteInput, setPasteInput] = useState('');
+  const [newProfileName, setNewProfileName] = useState('');
   const [statusMsg, setStatusMsg] = useState<{
     type: 'ok' | 'err';
     text: string;
@@ -191,10 +205,109 @@ export function SessionModal({
         </div>
 
         <div className="mt-5 space-y-6">
+          {/* Local Independent Profiles */}
+          <section className="space-y-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 p-4">
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
+                <Users className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <span>Perfiles en este navegador</span>
+              </h3>
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                Cada perfil guarda su avance por separado
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {profiles.map((prof) => {
+                const isActive = prof.id === activeProfile.id;
+                return (
+                  <div
+                    key={prof.id}
+                    className={`inline-flex items-center rounded-xl border-2 transition-colors ${
+                      isActive
+                        ? 'border-emerald-600 bg-emerald-600 text-white'
+                        : 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100'
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onSwitchProfile(prof.id);
+                        setStatusMsg({
+                          type: 'ok',
+                          text: `Perfil cambiado a "${prof.name}".`,
+                        });
+                      }}
+                      className="min-h-[40px] px-3.5 text-xs sm:text-sm font-bold flex items-center gap-2"
+                    >
+                      <span>{prof.name}</span>
+                      <span
+                        className={`font-mono text-xs tabular-nums ${
+                          isActive
+                            ? 'text-emerald-100'
+                            : 'text-slate-500 dark:text-slate-400'
+                        }`}
+                      >
+                        ({prof.progress.completedIds.length})
+                      </span>
+                    </button>
+                    {profiles.length > 1 && !isActive && (
+                      <button
+                        type="button"
+                        aria-label={`Eliminar perfil ${prof.name}`}
+                        onClick={() => onDeleteProfile(prof.id)}
+                        className="mr-1.5 flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 hover:text-rose-600"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                value={newProfileName}
+                onChange={(e) => setNewProfileName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && newProfileName.trim()) {
+                    onCreateProfile(newProfileName);
+                    setStatusMsg({
+                      type: 'ok',
+                      text: `Perfil "${newProfileName.trim()}" creado y activado.`,
+                    });
+                    setNewProfileName('');
+                  }
+                }}
+                placeholder="Nuevo perfil (ej. Compañera)"
+                maxLength={28}
+                className="min-h-[40px] flex-1 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-xs sm:text-sm text-slate-900 dark:text-white focus:border-emerald-500 focus:outline-none"
+              />
+              <button
+                type="button"
+                disabled={!newProfileName.trim()}
+                onClick={() => {
+                  onCreateProfile(newProfileName);
+                  setStatusMsg({
+                    type: 'ok',
+                    text: `Perfil "${newProfileName.trim()}" creado y activado.`,
+                  });
+                  setNewProfileName('');
+                }}
+                className="duo-btn inline-flex min-h-[40px] items-center justify-center gap-1.5 rounded-xl border-2 border-emerald-600 border-b-4 bg-emerald-600 hover:bg-emerald-500 disabled:border-slate-200 dark:disabled:border-slate-800 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 px-3.5 text-xs font-bold text-white whitespace-nowrap"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Crear perfil</span>
+              </button>
+            </div>
+          </section>
+
           {/* Export compressed Pinturillo code */}
           <section className="space-y-2.5">
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-              Tu código actual (comprimido)
+              Código de "{activeProfile.name}" (comprimido)
             </h3>
             <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-3 font-mono text-xs break-all text-slate-800 dark:text-slate-200 select-all">
               {sessionCode || 'Generando código...'}

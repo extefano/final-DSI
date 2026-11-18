@@ -25,8 +25,18 @@ type ActiveRoute =
 export default function App() {
   const { theme, toggleTheme, setTheme } = useTheme();
   const { isMobileOrTouch } = useInputMode();
-  const { progress, reviewIds, recordOutcome, replaceProgress, resetProgress } =
-    useProgress();
+  const {
+    profiles,
+    activeProfile,
+    progress,
+    reviewIds,
+    recordOutcome,
+    replaceProgress,
+    resetProgress,
+    switchProfile,
+    createProfile,
+    deleteProfile,
+  } = useProgress();
 
   const [catalog, setCatalog] = useState<CatalogIndex | null>(null);
   const [unitsCache, setUnitsCache] = useState<Record<string, UnitData>>({});
@@ -130,9 +140,14 @@ export default function App() {
     [replaceProgress, setTheme]
   );
 
-  const handleApplyHashSession = () => {
+  const handleApplyHashSession = (asNewProfile: boolean) => {
     if (!pendingHashSession) return;
-    handleImportState(pendingHashSession.progress, pendingHashSession.theme);
+    if (asNewProfile) {
+      createProfile('Sesión compartida', pendingHashSession.progress);
+      if (pendingHashSession.theme) setTheme(pendingHashSession.theme);
+    } else {
+      handleImportState(pendingHashSession.progress, pendingHashSession.theme);
+    }
     setPendingHashSession(null);
     window.history.replaceState(null, '', window.location.pathname + window.location.search);
   };
@@ -168,13 +183,20 @@ export default function App() {
                 ¿Querés cargarlo en este dispositivo?
               </p>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
               <button
                 type="button"
-                onClick={handleApplyHashSession}
-                className="duo-btn min-h-[40px] rounded-xl border-2 border-blue-600 border-b-4 bg-blue-600 hover:bg-blue-500 px-4 text-xs font-bold text-white"
+                onClick={() => handleApplyHashSession(true)}
+                className="duo-btn min-h-[40px] rounded-xl border-2 border-emerald-600 border-b-4 bg-emerald-600 hover:bg-emerald-500 px-3.5 text-xs font-bold text-white"
               >
-                Aplicar sesión
+                Abrir en perfil nuevo
+              </button>
+              <button
+                type="button"
+                onClick={() => handleApplyHashSession(false)}
+                className="duo-btn min-h-[40px] rounded-xl border-2 border-blue-600 border-b-4 bg-blue-600 hover:bg-blue-500 px-3.5 text-xs font-bold text-white"
+              >
+                Reemplazar "{activeProfile.name}"
               </button>
               <button
                 type="button"
@@ -225,6 +247,8 @@ export default function App() {
           unitExerciseIdsMap={unitExerciseIdsMap}
           progress={progress}
           reviewCount={reviewIds.length}
+          activeProfileName={activeProfile.name}
+          onOpenProfiles={() => setSyncModalOpen(true)}
           onStartUnit={(unit) => setRoute({ view: 'study', unit })}
           onStartReview={() => setRoute({ view: 'review' })}
         />
@@ -257,6 +281,11 @@ export default function App() {
       <SessionModal
         open={syncModalOpen}
         onClose={() => setSyncModalOpen(false)}
+        profiles={profiles}
+        activeProfile={activeProfile}
+        onSwitchProfile={switchProfile}
+        onCreateProfile={(name) => createProfile(name)}
+        onDeleteProfile={deleteProfile}
         progress={progress}
         theme={theme}
         onImportState={handleImportState}

@@ -104,6 +104,12 @@ export interface ProgressState {
   lastUpdated: number;
 }
 
+export interface StudyProfile {
+  id: string;
+  name: string;
+  progress: ProgressState;
+}
+
 export interface ExerciseResult {
   isCorrect: boolean;
   summary: string;
