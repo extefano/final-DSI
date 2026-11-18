@@ -1,0 +1,99 @@
+{
+  "unitId": "u3_3",
+  "title": "Unidad 3.3: SOLID, GRASP, Cohesión y Acoplamiento",
+  "exercises": [
+    {
+      "id": "u3_3_c01",
+      "type": "cloze",
+      "topic": "Responsabilidad Única (SRP) y Abierto-Cerrado (OCP)",
+      "template": "El principio {{SRP}} establece que una clase debe tener una única razón para cambiar; mientras que {{OCP}} indica que las entidades de software deben estar abiertas para su {{extensión}}, pero cerradas para su {{modificación}}.",
+      "distractors": ["herencia", "eliminación", "LSP"],
+      "explanation": "OCP suele implementarse mediante polimorfismo e interfaces para incorporar nuevos comportamientos sin alterar código estable."
+    },
+    {
+      "id": "u3_3_c02",
+      "type": "cloze",
+      "topic": "LSP, ISP y DIP en SOLID",
+      "template": "Según {{LSP}}, todo subtipo debe poder sustituir a su tipo base sin alterar la corrección; {{ISP}} aconseja dividir interfaces grandes en interfaces {{específicas}}; y {{DIP}} indica depender de {{abstracciones}} en lugar de implementaciones concretas.",
+      "distractors": ["instancias", "variables", "SRP"],
+      "explanation": "DIP invierte la dependencia clásica haciendo que módulos de alto y bajo nivel dependan de contratos abstractos."
+    },
+    {
+      "id": "u3_3_c03",
+      "type": "cloze",
+      "topic": "Ley de Demeter (Menor Conocimiento)",
+      "template": "La Ley de Demeter prohíbe encadenar llamadas a través de objetos internos (como a.getB().getC().hacer()), obligando a hablar solo con {{amigos}} inmediatos para reducir el {{acoplamiento}} estructural.",
+      "distractors": ["constructores", "atributos", "paquetes"],
+      "explanation": "Un método solo debe invocar operaciones de sí mismo, sus parámetros, objetos que él crea o sus atributos directos."
+    },
+    {
+      "id": "u3_3_c04",
+      "type": "cloze",
+      "topic": "GRASP Fundamentales (Larman)",
+      "template": "En GRASP, el patrón {{Experto en Información}} asigna la responsabilidad a la clase que posee los datos necesarios; {{Creador}} decide quién instancia un objeto; y {{Controlador}} recibe los eventos del sistema provenientes de la interfaz.",
+      "distractors": ["Singleton", "Adapter", "Observer"],
+      "explanation": "Experto, Creador, Controlador, Bajo Acoplamiento y Alta Cohesión forman el núcleo inicial de los 9 patrones GRASP."
+    },
+    {
+      "id": "u3_3_c05",
+      "type": "cloze",
+      "topic": "GRASP Avanzados",
+      "template": "Cuando ninguna clase del dominio resulta natural para asumir una responsabilidad (como persistencia), GRASP propone {{Fabricación Pura}}; para desacoplar dos elementos usa {{Indirección}}; y ante puntos de inestabilidad aplica {{Variaciones Protegidas}}.",
+      "distractors": ["Cohesión", "Herencia", "Decorador"],
+      "explanation": "Variaciones Protegidas envuelve puntos de cambio previsibles detrás de una interfaz estable."
+    },
+    {
+      "id": "u3_3_c06",
+      "type": "cloze",
+      "topic": "Escala de Cohesión y Acoplamiento",
+      "template": "En diseño modular se busca {{alta cohesión}} (idealmente cohesión {{funcional}}, donde todo contribuye a una sola tarea bien definida, frente a la peor que es la {{coincidente}}) y {{bajo acoplamiento}}.",
+      "distractors": ["temporal", "lógica", "fuerte"],
+      "explanation": "Los 7 niveles de cohesión de menor a mayor calidad son: coincidente, lógica, temporal, procedimental, comunicacional, secuencial y funcional."
+    },
+    {
+      "id": "u3_3_c07",
+      "type": "cloze",
+      "topic": "Principios DRY, KISS y YAGNI",
+      "template": "El principio {{DRY}} evita duplicar conocimiento en el sistema; {{KISS}} promueve soluciones simples por encima de complejidad innecesaria; y {{YAGNI}} recuerda no implementar funcionalidades especulativas hasta que sean realmente necesarias.",
+      "distractors": ["SOLID", "GRASP", "CASE"],
+      "explanation": "Aplicar SOLID en exceso sin respetar KISS/YAGNI genera sobre-ingeniería y proliferación innecesaria de clases."
+    },
+    {
+      "id": "u3_3_d01",
+      "type": "puzzle_diagram",
+      "topic": "Mapa de los 5 Principios SOLID",
+      "svgTemplate": "solid_principles",
+      "caption": "Asigná cada sigla SOLID a su regla de diseño orientada a objetos.",
+      "slots": [
+        { "id": "s1", "label": "S — Single Responsibility", "correctPiece": "Una clase, una única razón de cambio" },
+        { "id": "s2", "label": "O — Open / Closed", "correctPiece": "Abierto a extensión, cerrado a modificación" },
+        { "id": "s3", "label": "L — Liskov Substitution", "correctPiece": "Subtipos intercambiables por su clase base" },
+        { "id": "s4", "label": "I — Interface Segregation", "correctPiece": "Interfaces pequeñas enfocadas en cada cliente" },
+        { "id": "s5", "label": "D — Dependency Inversion", "correctPiece": "Módulos de alto nivel dependen de abstracciones" }
+      ],
+      "distractors": [
+        "Eliminar todas las interfaces del proyecto",
+        "Centralizar toda la lógica en una sola clase Dios"
+      ],
+      "explanation": "Los 5 principios SOLID de Robert C. Martin guían el diseño mantenible y extensible en POO."
+    },
+    {
+      "id": "u3_3_d02",
+      "type": "puzzle_diagram",
+      "topic": "Roles de Patrones GRASP",
+      "svgTemplate": "grasp_roles",
+      "caption": "Relacioná cada patrón GRASP con el problema de asignación de responsabilidades que resuelve.",
+      "slots": [
+        { "id": "g1", "label": "Creador", "correctPiece": "Clase B agrega, contiene o usa estrechamente a A" },
+        { "id": "g2", "label": "Experto en Información", "correctPiece": "Responsabilidad asignada a quien tiene los datos" },
+        { "id": "g3", "label": "Fabricación Pura", "correctPiece": "Clase artificial para preservar alta cohesión" },
+        { "id": "g4", "label": "Polimorfismo", "correctPiece": "Alternativas por tipo sin condicionales if/switch" }
+      ],
+      "distractors": [
+        "Garantizar una sola instancia global en memoria",
+        "Traducir una interfaz incompatible existente"
+      ],
+      "explanation": "GRASP complementa a los patrones GoF brindando criterios generales para asignar responsabilidades."
+    }
+  ]
+}

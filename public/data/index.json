@@ -1,0 +1,105 @@
+{
+  "courseTitle": "Diseño de Sistemas de Información",
+  "sourceDocument": "Apunte Diseño - carra.pdf",
+  "units": [
+    {
+      "unitId": "u1",
+      "code": "Unidad 1",
+      "title": "Metodologías de Desarrollo de Software",
+      "subtitle": "Capas de Pressman, Ralph & Wand, modelos Cascada, Prototipos, Espiral de Boehm y Proceso Unificado.",
+      "term": "1er Cuatrimestre",
+      "pdfPages": "2–11",
+      "file": "/data/u1_metodologias.json",
+      "exerciseCount": 9,
+      "accentColor": "emerald"
+    },
+    {
+      "unitId": "u2",
+      "code": "Unidad 2",
+      "title": "Interfaz de Usuario, Usabilidad y UX",
+      "subtitle": "Salidas y entradas, WIMP, 8 Reglas de Shneiderman, UCD, Usabilidad de Nielsen, WCAG/ONTI, Morville y Design Thinking.",
+      "term": "1er Cuatrimestre",
+      "pdfPages": "11–39",
+      "file": "/data/u2_ui_ux.json",
+      "exerciseCount": 9,
+      "accentColor": "blue"
+    },
+    {
+      "unitId": "u3_1",
+      "code": "Unidad 3.1",
+      "title": "Paradigma Orientado a Objetos",
+      "subtitle": "Estado/comportamiento/identidad, mensajes, responsabilidad Larman, pilares de Booch, polimorfismo, CRC y estereotipos BCE.",
+      "term": "1er Cuatrimestre",
+      "pdfPages": "39–50",
+      "file": "/data/u3_1_poo.json",
+      "exerciseCount": 7,
+      "accentColor": "violet"
+    },
+    {
+      "unitId": "u3_2",
+      "code": "Unidad 3.2",
+      "title": "Lenguaje Unificado de Modelado (UML)",
+      "subtitle": "Bloques de construcción, visibilidad, asociaciones, generalización, dependencias, estados, secuencia y diagramas de despliegue.",
+      "term": "1er Cuatrimestre",
+      "pdfPages": "50–104",
+      "file": "/data/u3_2_uml.json",
+      "exerciseCount": 9,
+      "accentColor": "teal"
+    },
+    {
+      "unitId": "u3_3",
+      "code": "Unidad 3.3",
+      "title": "SOLID, GRASP, Cohesión y Acoplamiento",
+      "subtitle": "Principios SOLID, Ley de Demeter, 9 patrones GRASP, escala de cohesión, acoplamiento y principios DRY/KISS/YAGNI.",
+      "term": "2do Cuatrimestre",
+      "pdfPages": "104–110, 126–132",
+      "file": "/data/u3_3_solid_grasp.json",
+      "exerciseCount": 9,
+      "accentColor": "amber"
+    },
+    {
+      "unitId": "u4",
+      "code": "Unidad 4",
+      "title": "Arquitectura de Software y Distribuidos",
+      "subtitle": "Bass et al., vistas C&C/Módulos/Asignación, escenarios de calidad, tácticas, estilos arquitectónicos, Kruchten 4+1, SOA y Microservicios.",
+      "term": "2do Cuatrimestre",
+      "pdfPages": "110–124, 132–169",
+      "file": "/data/u4_arquitectura.json",
+      "exerciseCount": 10,
+      "accentColor": "blue"
+    },
+    {
+      "unitId": "u5",
+      "code": "Unidad 5",
+      "title": "PUDS/RUP y Metodologías Ágiles",
+      "subtitle": "Las 4P+H, fases y flujos de RUP, Manifiesto Ágil, Scrum, XP, Crystal, FDD y DSDM.",
+      "term": "2do Cuatrimestre",
+      "pdfPages": "199–225",
+      "file": "/data/u5_puds_agil.json",
+      "exerciseCount": 8,
+      "accentColor": "emerald"
+    },
+    {
+      "unitId": "u6",
+      "code": "Unidad 6",
+      "title": "Reutilización y Patrones de Diseño GoF",
+      "subtitle": "Reutilización sistemática, catálogo de Gamma et al., patrones Creacionales, Estructurales y de Comportamiento.",
+      "term": "2do Cuatrimestre",
+      "pdfPages": "169–199",
+      "file": "/data/u6_reutilizacion_gof.json",
+      "exerciseCount": 9,
+      "accentColor": "violet"
+    },
+    {
+      "unitId": "calidad",
+      "code": "Calidad",
+      "title": "Calidad de Software y Métricas",
+      "subtitle": "5 puntos de vista de calidad, modelos McCall e ISO/IEC 25010, costos de calidad, revisiones formales, SQA y SQC.",
+      "term": "Transversal",
+      "pdfPages": "225–240",
+      "file": "/data/calidad_software.json",
+      "exerciseCount": 8,
+      "accentColor": "rose"
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "unitId": "u3_2",
+  "title": "Unidad 3.2: Lenguaje Unificado de Modelado (UML)",
+  "exercises": [
+    {
+      "id": "u3_2_c01",
+      "type": "cloze",
+      "topic": "Visibilidad de Miembros en UML",
+      "template": "En los clasificadores UML, los prefijos de visibilidad indican acceso: '+' corresponde a {{public}}, '-' a {{private}}, '#' a {{protected}} y '~' a visibilidad de {{package}}.",
+      "distractors": ["abstract", "static", "derived"],
+      "explanation": "El alcance de clase (subrayado en UML) indica un atributo o método estático compartido por todas las instancias."
+    },
+    {
+      "id": "u3_2_c02",
+      "type": "cloze",
+      "topic": "Bloques de Construcción de UML",
+      "template": "El vocabulario de UML se organiza en tres bloques de construcción: {{cosas}} (estructurales, de comportamiento, agrupación y anotación), {{relaciones}} y {{diagramas}}.",
+      "distractors": ["sentencias", "tablas", "servicios"],
+      "explanation": "Estos bloques se combinan siguiendo reglas sintácticas y mecanismos comunes como especificaciones y adornos."
+    },
+    {
+      "id": "u3_2_c03",
+      "type": "cloze",
+      "topic": "Restricciones en Generalización UML",
+      "template": "En conjuntos de generalización UML, {{disjoint}} indica que una instancia pertenece como máximo a una subclase, {{overlapping}} permite pertenecer a varias, {{complete}} señala que no hay más subclases posibles e {{incomplete}} permite futuras extensiones.",
+      "distractors": ["ordered", "readOnly", "frozen"],
+      "explanation": "Estas restricciones precisan la semántica de la jerarquía de herencia en el modelo conceptual."
+    },
+    {
+      "id": "u3_2_c04",
+      "type": "cloze",
+      "topic": "Estereotipos de Dependencia UML",
+      "template": "Una relación de dependencia puede usar estereotipos específicos: «{{trace}}» vincula requisitos con elementos de diseño, «{{import}}» incorpora contenido de un paquete a otro y «{{refine}}» conecta dos niveles distintos de abstracción.",
+      "distractors": ["include", "extend", "override"],
+      "explanation": "A diferencia de las relaciones de casos de uso («include»/«extend»), estos estereotipos documentan trazabilidad e importación."
+    },
+    {
+      "id": "u3_2_c05",
+      "type": "cloze",
+      "topic": "Notación de Interfaces en Componentes",
+      "template": "En diagramas de componentes UML, una interfaz provista se representa gráficamente con un círculo completo conocido como {{lollipop}}, mientras que una interfaz requerida se dibuja como un semicírculo llamado {{socket}}.",
+      "distractors": ["rombo", "triángulo", "nube"],
+      "explanation": "El encastre lollipop-socket muestra claramente qué componente ofrece un contrato y cuál lo consume."
+    },
+    {
+      "id": "u3_2_c06",
+      "type": "cloze",
+      "topic": "Acciones en Máquinas de Estados",
+      "template": "Dentro de un estado en UML, {{entry}} se ejecuta al ingresar al estado, {{exit}} al abandonarlo, {{do}} representa una actividad continua mientras permanece allí y {{defer}} posterga un evento para tratarlo después.",
+      "distractors": ["fork", "join", "guard"],
+      "explanation": "Las transiciones externas pueden llevar condición de guarda [corchetes] y disparador/efecto."
+    },
+    {
+      "id": "u3_2_c07",
+      "type": "cloze",
+      "topic": "Fragmentos Combinados de Secuencia",
+      "template": "En diagramas de secuencia UML, el operador {{ALT}} modela alternativas excluyentes (if/else), {{OPT}} un bloque opcional, {{LOOP}} una repetición iterativa y {{PAR}} ejecución concurrente en paralelo.",
+      "distractors": ["REF", "BREAK", "CRITICAL"],
+      "explanation": "Los fragmentos combinados permiten expresar flujo de control complejo sin perder claridad temporal."
+    },
+    {
+      "id": "u3_2_d01",
+      "type": "puzzle_diagram",
+      "topic": "Relaciones UML y su Notación",
+      "svgTemplate": "uml_relations",
+      "caption": "Emparejá cada relación UML con la notación de línea y punta que le corresponde.",
+      "slots": [
+        { "id": "u1", "label": "Herencia / Generalización", "correctPiece": "Línea continua con triángulo vacío" },
+        { "id": "u2", "label": "Dependencia", "correctPiece": "Línea discontinua con flecha abierta" },
+        { "id": "u3", "label": "Realización", "correctPiece": "Línea discontinua con triángulo vacío" },
+        { "id": "u4", "label": "Composición", "correctPiece": "Línea continua con rombo negro relleno" },
+        { "id": "u5", "label": "Agregación", "correctPiece": "Línea continua con rombo blanco vacío" }
+      ],
+      "distractors": [
+        "Línea discontinua con rombo negro",
+        "Doble línea continua con círculo"
+      ],
+      "explanation": "Distinguir triángulo vacío (herencia/realización), flecha abierta (dependencia) y rombos (agregación/composición) es clave en UML."
+    },
+    {
+      "id": "u3_2_p01",
+      "type": "puzzle_grid",
+      "topic": "Las 4+1 Vistas de Modelado",
+      "image": "",
+      "diagramKind": "uml_views_4plus1",
+      "cols": 2,
+      "rows": 2,
+      "caption": "Reconstruí el esquema de las 4+1 vistas arquitectónicas integradas por Casos de Uso.",
+      "explanation": "Las vistas Lógica, de Desarrollo, de Procesos y Física se validan mediante el +1 de Escenarios (Casos de Uso)."
+    }
+  ]
+}

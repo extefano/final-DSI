@@ -1,0 +1,83 @@
+{
+  "unitId": "calidad",
+  "title": "Calidad de Software y Métricas",
+  "exercises": [
+    {
+      "id": "cal_c01",
+      "type": "cloze",
+      "topic": "Cinco Puntos de Vista de la Calidad (Garvin)",
+      "template": "La calidad puede evaluarse desde cinco perspectivas complementarias: {{trascendental}} (se reconoce al verla), del {{usuario}} (adecuación al uso), de {{manufactura}} (conformidad con especificaciones), del {{producto}} (atributos internos medibles) y basada en {{valor}} (beneficio vs costo).",
+      "distractors": ["comercial", "estética", "contractual"],
+      "explanation": "Cada interesado del proyecto prioriza una perspectiva diferente: el cliente el uso/valor; el equipo técnico la conformidad y atributos."
+    },
+    {
+      "id": "cal_c02",
+      "type": "cloze",
+      "topic": "Modelo de Calidad de McCall",
+      "template": "El modelo clásico de McCall agrupa 11 factores de calidad en tres grandes ejes vinculados al ciclo de vida del software: {{operación}} del producto, {{revisión}} del producto y {{transición}} del producto.",
+      "distractors": ["comercialización", "instalación", "auditoría"],
+      "explanation": "Operación evalúa uso diario (corrección, confiabilidad, usabilidad); Revisión la capacidad de cambio; Transición la portabilidad e interoperabilidad."
+    },
+    {
+      "id": "cal_c03",
+      "type": "cloze",
+      "topic": "Norma ISO/IEC 25010",
+      "template": "El estándar internacional {{ISO/IEC 25010}} (sucesor de ISO 9126) define ocho características de calidad del producto software, incorporando explícitamente la {{seguridad}} y la {{compatibilidad}} junto a adecuación funcional, eficiencia, usabilidad, fiabilidad, mantenibilidad y portabilidad.",
+      "distractors": ["IEEE 830", "WCAG 2.1", "economía"],
+      "explanation": "Además del modelo de calidad del producto, ISO 25010 define un modelo de calidad en uso (efectividad, eficiencia, satisfacción, libertad de riesgo)."
+    },
+    {
+      "id": "cal_c04",
+      "type": "cloze",
+      "topic": "Costos de la Calidad",
+      "template": "Los costos asociados a la calidad se dividen en costos de control —{{prevención}} y {{evaluación}}— y costos por fallas —{{internas}} (detectadas antes de entregar) y {{externas}} (detectadas por el usuario en producción)—.",
+      "distractors": ["infraestructura", "licencias", "publicidad"],
+      "explanation": "Invertir en prevención y evaluación temprana reduce drásticamente el costo exponencial de fallas externas en producción."
+    },
+    {
+      "id": "cal_c05",
+      "type": "cloze",
+      "topic": "SQA vs SQC",
+      "template": "El Aseguramiento de la Calidad ({{SQA}}) se enfoca en auditar y mejorar el {{proceso}} para prevenir defectos de manera continua, mientras que el Control de Calidad ({{SQC}}) inspecciona y prueba el {{producto}} resultante para detectar defectos antes de la entrega.",
+      "distractors": ["hardware", "presupuesto", "UML"],
+      "explanation": "SQA es proactivo orientado al proceso; SQC es reactivo/detectivo orientado al producto."
+    },
+    {
+      "id": "cal_c06",
+      "type": "cloze",
+      "topic": "Revisiones Técnicas Formales (RTF)",
+      "template": "Una {{revisión técnica formal}} (como una inspección) busca descubrir errores funcionales, lógicos o de omisión tempranamente; debe evaluar el {{producto}} (no al autor), contar con una agenda acotada y generar un registro de {{hallazgos}} sin intentar corregir el código durante la reunión.",
+      "distractors": ["presupuesto", "empleado", "contrato"],
+      "explanation": "Detectar un defecto de diseño en una revisión cuesta una fracción mínima comparado con descubrirlo en pruebas o producción."
+    },
+    {
+      "id": "cal_p01",
+      "type": "puzzle_grid",
+      "topic": "Características de ISO/IEC 25010",
+      "image": "",
+      "diagramKind": "iso25010_quality",
+      "cols": 3,
+      "rows": 2,
+      "caption": "Reconstruí el tablero de las 8 características de calidad del producto ISO/IEC 25010 (grilla 3×2).",
+      "explanation": "ISO 25010 organiza sistemáticamente los atributos de calidad internos y externos del software."
+    },
+    {
+      "id": "cal_d01",
+      "type": "puzzle_diagram",
+      "topic": "Ejes de McCall y Costos de Calidad",
+      "svgTemplate": "quality_mccall_iso",
+      "caption": "Ubicá cada grupo de factores de calidad y costos en la categoría correcta.",
+      "slots": [
+        { "id": "q1", "label": "Operación del Producto (McCall)", "correctPiece": "Corrección, fiabilidad, eficiencia, integridad y usabilidad" },
+        { "id": "q2", "label": "Revisión del Producto (McCall)", "correctPiece": "Mantenibilidad, flexibilidad y facilidad de prueba" },
+        { "id": "q3", "label": "Transición del Producto (McCall)", "correctPiece": "Portabilidad, reusabilidad e interoperabilidad" },
+        { "id": "q4", "label": "Costos de Prevención", "correctPiece": "Capacitación, planificación de calidad y revisiones tempranas" }
+      ],
+      "distractors": [
+        "Indemnizaciones y soporte tras fallar en cliente",
+        "Licencias de compiladores y servidores de prueba"
+      ],
+      "explanation": "Comprender los factores de McCall junto con el esquema de costos justifica económicamente las prácticas de SQA."
+    }
+  ]
+}

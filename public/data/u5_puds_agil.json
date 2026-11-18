@@ -1,0 +1,83 @@
+{
+  "unitId": "u5",
+  "title": "Unidad 5: PUDS/RUP y Metodologías Ágiles",
+  "exercises": [
+    {
+      "id": "u5_c01",
+      "type": "cloze",
+      "topic": "Las 4 P + H en PUDS/RUP",
+      "template": "La gestión de proyectos en el Proceso Unificado de Desarrollo de Software (PUDS/RUP) equilibra cinco dimensiones clave conocidas como 4P+H: {{Personas}}, {{Producto}}, {{Proceso}}, {{Proyecto}} y {{Herramientas}}.",
+      "distractors": ["Presupuesto", "Plataforma", "Patrones"],
+      "explanation": "Además, el Proceso Unificado se caracteriza por ser guiado por casos de uso, centrado en la arquitectura e iterativo e incremental."
+    },
+    {
+      "id": "u5_c02",
+      "type": "cloze",
+      "topic": "Las 4 Fases de RUP",
+      "template": "El ciclo de vida de RUP avanza por cuatro fases secuenciales con hitos definidos: {{Inicio}} (visión y alcance), {{Elaboración}} (arquitectura base ejecutable), {{Construcción}} (desarrollo de funcionalidades) y {{Transición}} (entrega al usuario final).",
+      "distractors": ["Planificación", "Auditoría", "Mantenimiento"],
+      "explanation": "En cada fase se ejecutan con distinta intensidad los flujos de trabajo (requisitos, análisis y diseño, implementación, pruebas)."
+    },
+    {
+      "id": "u5_c03",
+      "type": "cloze",
+      "topic": "Valores del Manifiesto Ágil",
+      "template": "El Manifiesto Ágil prioriza: {{individuos e interacciones}} sobre procesos y herramientas; {{software funcionando}} sobre documentación extensiva; {{colaboración con el cliente}} sobre negociación contractual; y {{respuesta ante el cambio}} sobre seguir un plan.",
+      "distractors": ["arquitectura detallada", "contratos cerrados", "jerarquías rígidas"],
+      "explanation": "Aunque los elementos de la derecha tienen valor, los métodos ágiles valoran más los de la izquierda para entregar valor temprano."
+    },
+    {
+      "id": "u5_c04",
+      "type": "cloze",
+      "topic": "Roles y Ceremonias de Scrum",
+      "template": "En Scrum, el {{Product Owner}} maximiza el valor del producto gestionando el Product Backlog; el {{Scrum Master}} facilita el marco y remueve impedimentos; y en iteraciones cortas llamadas {{Sprint}} se realiza la reunión diaria {{Daily Scrum}} de 15 minutos.",
+      "distractors": ["Project Manager", "Arquitecto Jefe", "Milestone"],
+      "explanation": "Scrum se completa con Sprint Planning, Sprint Review (inspección del incremento) y Sprint Retrospective (mejora del equipo)."
+    },
+    {
+      "id": "u5_c05",
+      "type": "cloze",
+      "topic": "Prácticas de Extreme Programming (XP)",
+      "template": "Extreme Programming (XP) lleva al extremo las buenas prácticas técnicas mediante desarrollo guiado por pruebas ({{TDD}}), {{programación en parejas}}, {{integración continua}} y {{refactorización}} constante del código.",
+      "distractors": ["diagramas formales", "documentación UML", "prototipos desechables"],
+      "explanation": "XP se apoya en cuatro valores centrales: comunicación, simplicidad, retroalimentación y coraje (más respeto)."
+    },
+    {
+      "id": "u5_c06",
+      "type": "cloze",
+      "topic": "Crystal, FDD, ASD y DSDM",
+      "template": "Otras metodologías ágiles estudiadas son: {{Crystal}} (familia ajustada por tamaño y criticidad del equipo), {{FDD}} (desarrollo guiado por funcionalidades en listas cortas), {{ASD}} (especulación, colaboración y aprendizaje) y {{DSDM}} (tiempo y recursos fijos).",
+      "distractors": ["RUP", "Cascada", "Espiral"],
+      "explanation": "Cada enfoque ágil adapta el nivel de ceremonia según el riesgo, tamaño del equipo y frecuencia de entrega."
+    },
+    {
+      "id": "u5_p01",
+      "type": "puzzle_grid",
+      "topic": "Fases y Flujos del Proceso Unificado",
+      "image": "",
+      "diagramKind": "iterative_up",
+      "cols": 2,
+      "rows": 2,
+      "caption": "Ordená la matriz bidimensional de fases y flujos de UP/RUP.",
+      "explanation": "Las 4 fases (Inicio, Elaboración, Construcción, Transición) cruzan horizontalmente los flujos técnicos y de soporte."
+    },
+    {
+      "id": "u5_d01",
+      "type": "puzzle_diagram",
+      "topic": "Artefactos y Eventos de Scrum",
+      "svgTemplate": "scrum_artifacts",
+      "caption": "Asociá cada elemento de Scrum con su responsabilidad o propósito dentro del marco ágil.",
+      "slots": [
+        { "id": "sc1", "label": "Product Backlog", "correctPiece": "Lista ordenada y viva de todo lo necesario en el producto" },
+        { "id": "sc2", "label": "Sprint Backlog", "correctPiece": "Objetivo del Sprint más elementos seleccionados y plan" },
+        { "id": "sc3", "label": "Incremento", "correctPiece": "Suma usable y verificada que cumple la Definición de Terminado" },
+        { "id": "sc4", "label": "Sprint Retrospective", "correctPiece": "Inspección del equipo para mejorar procesos e interacciones" }
+      ],
+      "distractors": [
+        "Documento contractual fijo firmado antes de programar",
+        "Informe mensual de horas individuales para gerencia"
+      ],
+      "explanation": "Los tres artefactos de Scrum (Product Backlog, Sprint Backlog e Incremento) garantizan transparencia e inspección."
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Estudio DSI",
+  "description": "Plataforma interactiva gamificada para estudiar Diseño de Sistemas de Información con ejercicios cloze, rompecabezas de diagramas, repaso espaciado de errores y sincronización de sesión.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

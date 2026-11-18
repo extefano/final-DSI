@@ -1,0 +1,92 @@
+{
+  "unitId": "u2",
+  "title": "Unidad 2: Interfaz de Usuario, Usabilidad y UX",
+  "exercises": [
+    {
+      "id": "u2_c01",
+      "type": "cloze",
+      "topic": "Control de Entradas y Formularios",
+      "template": "El diseño cuidadoso de entradas y formularios garantiza la calidad de los datos mediante tres controles esenciales: {{validez}} (formato y dominio correcto), {{integridad}} (completitud sin datos huérfanos) y {{consistencia}} (coherencia entre campos relacionados).",
+      "distractors": ["velocidad", "estética", "redundancia"],
+      "explanation": "Validar entradas en origen evita propagar errores hacia la base de datos y las salidas."
+    },
+    {
+      "id": "u2_c02",
+      "type": "cloze",
+      "topic": "Paradigma GUI / WIMP",
+      "template": "El paradigma clásico de interfaz gráfica WIMP debe su nombre a cuatro elementos visuales interactivos: {{ventanas}}, {{iconos}}, {{menús}} y dispositivo {{puntero}}.",
+      "distractors": ["comandos", "tablas", "formularios"],
+      "explanation": "WIMP (Windows, Icons, Menus, Pointer) permitió la manipulación directa frente a las interfaces de línea de comandos."
+    },
+    {
+      "id": "u2_c03",
+      "type": "cloze",
+      "topic": "8 Reglas de Oro de Shneiderman",
+      "template": "Entre las 8 Reglas de Oro de Shneiderman destacan: mantener la {{consistencia}}, ofrecer {{atajos}} para usuarios frecuentes, brindar {{retroalimentación}} informativa y permitir {{deshacer}} fácilmente las acciones.",
+      "distractors": ["ambigüedad", "latencia", "animaciones"],
+      "explanation": "Estas reglas reducen la carga de memoria a corto plazo y otorgan sensación de control al usuario."
+    },
+    {
+      "id": "u2_c04",
+      "type": "cloze",
+      "topic": "Diseño Centrado en el Usuario (UCD)",
+      "template": "Los mandamientos del Diseño Centrado en el Usuario exigen involucrar a los {{usuarios}} desde el comienzo, aplicar un proceso {{iterativo}} y validar supuestos tempranamente mediante {{prototipos}}.",
+      "distractors": ["servidores", "manuales", "contratos"],
+      "explanation": "El UCD evita diseñar desde suposiciones internas del equipo técnico sin contacto real con quien usa el sistema."
+    },
+    {
+      "id": "u2_c05",
+      "type": "cloze",
+      "topic": "Atributos de Usabilidad según Nielsen",
+      "template": "Jakob Nielsen define la usabilidad mediante cinco atributos medibles: facilidad de {{aprendizaje}}, {{eficiencia}} de uso, {{memorabilidad}}, baja tasa de {{errores}} y {{satisfacción}} subjetiva.",
+      "distractors": ["complejidad", "portabilidad", "seguridad"],
+      "explanation": "Junto con las 5 E de Quesenbery (Efectivo, Eficiente, Atractivo, Tolerante a errores, Fácil de aprender), miden la calidad de uso."
+    },
+    {
+      "id": "u2_c06",
+      "type": "cloze",
+      "topic": "Accesibilidad Web (WCAG / ONTI)",
+      "template": "Las pautas de accesibilidad WCAG (adoptadas por la ONTI en Argentina) se estructuran en cuatro principios conocidos como POUR: el contenido debe ser {{perceptible}}, {{operable}}, {{comprensible}} y {{robusto}}.",
+      "distractors": ["decorativo", "veloz", "privado"],
+      "explanation": "Estos 4 principios aseguran compatibilidad con lectores de pantalla, navegación por teclado y distintos dispositivos."
+    },
+    {
+      "id": "u2_c07",
+      "type": "cloze",
+      "topic": "Fases de Design Thinking",
+      "template": "El proceso de Design Thinking consta de cinco etapas no lineales: {{empatizar}} con el usuario, {{definir}} el problema central, {{idear}} soluciones divergentes, {{prototipar}} artefactos tangibles y {{evaluar}} con usuarios reales.",
+      "distractors": ["codificar", "desplegar", "vender"],
+      "explanation": "Permite explorar necesidades latentes (como en el caso clásico de Airbnb) antes de invertir en desarrollo."
+    },
+    {
+      "id": "u2_p01",
+      "type": "puzzle_grid",
+      "topic": "Panal UX de Peter Morville",
+      "image": "",
+      "diagramKind": "morville_ux",
+      "cols": 3,
+      "rows": 2,
+      "caption": "Reconstruí el Panal de la Experiencia de Usuario de Morville (grilla 3×2).",
+      "explanation": "En el centro se ubica Valioso, rodeado por Útil, Usable, Deseable, Accesible, Creíble y Encontrable."
+    },
+    {
+      "id": "u2_d01",
+      "type": "puzzle_diagram",
+      "topic": "7 Facetas de la UX (Morville)",
+      "svgTemplate": "morville_honeycomb",
+      "caption": "Vinculá cada faceta del panal de Morville con la pregunta clave que responde.",
+      "slots": [
+        { "id": "m1", "label": "Útil (Useful)", "correctPiece": "¿El producto resuelve una necesidad real?" },
+        { "id": "m2", "label": "Usable", "correctPiece": "¿Es simple y fácil de operar sin fricción?" },
+        { "id": "m3", "label": "Encontrable (Findable)", "correctPiece": "¿El usuario navega y halla lo que busca?" },
+        { "id": "m4", "label": "Accesible", "correctPiece": "¿Pueden usarlo personas con discapacidades?" },
+        { "id": "m5", "label": "Valioso (Valuable)", "correctPiece": "¿Aporta valor al usuario y a la organización?" }
+      ],
+      "distractors": [
+        "¿Utiliza la última versión del servidor?",
+        "¿Minimiza el tamaño del archivo ejecutable?"
+      ],
+      "explanation": "La UX abarca mucho más que la usabilidad operativa: incluye emoción, credibilidad, accesibilidad y valor."
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "unitId": "u1",
+  "title": "Unidad 1: Metodologías de Desarrollo de Software",
+  "exercises": [
+    {
+      "id": "u1_c01",
+      "type": "cloze",
+      "topic": "Capas de Pressman",
+      "template": "La base de toda ingeniería de software es un compromiso con la {{calidad}}, sobre la cual se apoyan los {{procesos}} (que definen el Qué), los {{métodos}} (que definen el Cómo) y las {{herramientas}} (soporte CASE).",
+      "distractors": ["requisitos", "artefactos", "restricciones"],
+      "explanation": "Pressman organiza la Ingeniería de Software como una tecnología de cuatro capas concéntricas desde la calidad hasta las herramientas."
+    },
+    {
+      "id": "u1_c02",
+      "type": "cloze",
+      "topic": "Ingeniería de Software (IEEE)",
+      "template": "Según la IEEE, la ingeniería de software es la aplicación de un enfoque sistemático, {{disciplinado}} y {{cuantificable}} al desarrollo, operación y {{mantenimiento}} del software.",
+      "distractors": ["empírico", "artesanal", "comercial"],
+      "explanation": "A diferencia del desarrollo artesanal, la ingeniería aplica métodos repetibles, medibles y mantenibles en el tiempo."
+    },
+    {
+      "id": "u1_c03",
+      "type": "cloze",
+      "topic": "Definición de Diseño (Ralph & Wand)",
+      "template": "Para Ralph y Wand, el diseño es la especificación de un {{artefacto}}, manifestado por algún agente, destinado a lograr metas en un entorno particular usando componentes primitivos, satisfaciendo {{requisitos}} y sujeto a {{restricciones}}.",
+      "distractors": ["algoritmo", "prototipos", "presupuestos"],
+      "explanation": "El diseño no es la construcción directa, sino la especificación estructural previa del artefacto."
+    },
+    {
+      "id": "u1_c04",
+      "type": "cloze",
+      "topic": "Actividades Marco de Pressman",
+      "template": "Las cinco actividades estructurales genéricas del marco de proceso de Pressman son: {{comunicación}}, {{planeación}}, {{modelado}}, {{construcción}} y {{despliegue}}.",
+      "distractors": ["auditoría", "facturación", "soporte"],
+      "explanation": "Estas actividades se complementan con actividades sombrilla transversales como gestión de riesgos, SQA y control de configuración."
+    },
+    {
+      "id": "u1_c05",
+      "type": "cloze",
+      "topic": "Hitos del Modelo en Espiral (Boehm)",
+      "template": "En la evolución del Modelo en Espiral de Boehm se definen tres hitos de anclaje clave: {{LCO}} (Objetivos del Ciclo de Vida), {{LCA}} (Arquitectura del Ciclo de Vida) e {{IOC}} (Capacidad Operacional Inicial).",
+      "distractors": ["UML", "CASE", "SLA"],
+      "explanation": "LCO valida la factibilidad inicial, LCA compromete la arquitectura y IOC marca la primera versión operable."
+    },
+    {
+      "id": "u1_c06",
+      "type": "cloze",
+      "topic": "Método, Metodología y Ciclo de Vida",
+      "template": "Mientras el {{ciclo de vida}} indica qué etapas atraviesa el software de principio a fin, una {{metodología}} integra un conjunto organizado de procedimientos y técnicas, y un {{método}} detalla la manera sistemática de realizar una tarea técnica específica.",
+      "distractors": ["diagrama", "entorno", "patrón"],
+      "explanation": "El SDLC define las fases temporales; la metodología orquesta métodos, modelos y reglas."
+    },
+    {
+      "id": "u1_p01",
+      "type": "puzzle_grid",
+      "topic": "Capas de la Ingeniería de Software",
+      "image": "",
+      "diagramKind": "pressman_layers",
+      "cols": 2,
+      "rows": 2,
+      "caption": "Reconstruí el diagrama de las 4 capas de Pressman en orden.",
+      "explanation": "De abajo hacia arriba: Calidad → Proceso → Métodos → Herramientas."
+    },
+    {
+      "id": "u1_p02",
+      "type": "puzzle_grid",
+      "topic": "Modelo en Espiral de Boehm",
+      "image": "",
+      "diagramKind": "boehm_spiral",
+      "cols": 2,
+      "rows": 2,
+      "caption": "Ordená los cuatro cuadrantes del ciclo en espiral impulsado por riesgos.",
+      "explanation": "Cada vuelta recorre: Objetivos → Riesgos → Desarrollo y Pruebas → Planificación."
+    },
+    {
+      "id": "u1_d01",
+      "type": "puzzle_diagram",
+      "topic": "Cuadrantes de Boehm",
+      "svgTemplate": "boehm_quadrants",
+      "caption": "Asociá cada cuadrante del Modelo en Espiral con su propósito principal.",
+      "slots": [
+        { "id": "b1", "label": "Cuadrante I (Superior Izq.)", "correctPiece": "Determinar objetivos, alternativas y restricciones" },
+        { "id": "b2", "label": "Cuadrante II (Superior Der.)", "correctPiece": "Evaluar alternativas, identificar y resolver riesgos" },
+        { "id": "b3", "label": "Cuadrante III (Inferior Der.)", "correctPiece": "Desarrollar y verificar el producto del nivel" },
+        { "id": "b4", "label": "Cuadrante IV (Inferior Izq.)", "correctPiece": "Planificar las siguientes fases y revisar hitos" }
+      ],
+      "distractors": [
+        "Congelar requisitos sin prototipos",
+        "Eliminar la gestión de configuración"
+      ],
+      "explanation": "El modelo en espiral combina el enfoque iterativo con la gestión explícita del riesgo en el cuadrante II."
+    }
+  ]
+}

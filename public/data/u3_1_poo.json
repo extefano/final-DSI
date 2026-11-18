@@ -1,0 +1,71 @@
+{
+  "unitId": "u3_1",
+  "title": "Unidad 3.1: Paradigma Orientado a Objetos",
+  "exercises": [
+    {
+      "id": "u3_1_c01",
+      "type": "cloze",
+      "topic": "Anatomía de un Objeto",
+      "template": "Todo objeto en el paradigma orientado a objetos se caracteriza por tres propiedades esenciales: posee un {{estado}} (valores de sus atributos), un {{comportamiento}} (operaciones ante mensajes) y una {{identidad}} única que lo distingue de otros.",
+      "distractors": ["interfaz", "paquete", "constructor"],
+      "explanation": "Incluso si dos objetos tienen exactamente los mismos valores de atributos, conservan identidades distintas en memoria."
+    },
+    {
+      "id": "u3_1_c02",
+      "type": "cloze",
+      "topic": "Tipos de Mensajes entre Objetos",
+      "template": "Según la espera del emisor, un mensaje puede ser {{sincrónico}} (el emisor se bloquea hasta recibir respuesta), {{asincrónico}} (continúa su ejecución sin esperar) o con {{tiempo límite}} (espera acotada antes de continuar).",
+      "distractors": ["estático", "polimórfico", "recursivo"],
+      "explanation": "La comunicación por mensajes permite encapsular cómo el receptor ejecuta la responsabilidad solicitada."
+    },
+    {
+      "id": "u3_1_c03",
+      "type": "cloze",
+      "topic": "Responsabilidad y Tarjetas CRC",
+      "template": "Según Larman, una {{responsabilidad}} es un contrato u obligación de una clase (de hacer o de conocer). Las tarjetas CRC documentan el nombre de la {{clase}}, sus responsabilidades y sus {{colaboradores}}.",
+      "distractors": ["herencia", "excepción", "instancia"],
+      "explanation": "Las tarjetas CRC (Clase - Responsabilidad - Colaboración) facilitan descubrir asignaciones de roles en grupo."
+    },
+    {
+      "id": "u3_1_c04",
+      "type": "cloze",
+      "topic": "Pilares Fundamentales de Booch",
+      "template": "Grady Booch identifica cuatro pilares fundamentales de la orientación a objetos: {{abstracción}}, {{encapsulamiento}}, {{modularidad}} y {{jerarquía}}.",
+      "distractors": ["persistencia", "concurrencia", "compilación"],
+      "explanation": "A los 4 pilares fundamentales se suman 3 pilares secundarios: tipado, concurrencia y persistencia."
+    },
+    {
+      "id": "u3_1_c05",
+      "type": "cloze",
+      "topic": "Agregación Débil vs Composición Fuerte",
+      "template": "La agregación {{débil}} representa una relación todo-parte donde las partes pueden existir sin el todo; en cambio, la composición o agregación {{fuerte}} implica propiedad exclusiva y un {{ciclo de vida}} dependiente del todo.",
+      "distractors": ["abstracta", "transitiva", "estática"],
+      "explanation": "Si se destruye el objeto compuesto en una relación fuerte, sus partes también se destruyen."
+    },
+    {
+      "id": "u3_1_c06",
+      "type": "cloze",
+      "topic": "Polimorfismo vs Sobrecarga",
+      "template": "El {{polimorfismo}} permite que distintos objetos respondan al mismo mensaje con implementaciones específicas resueltas en tiempo de ejecución, mientras que la {{sobrecarga}} define varios métodos con igual nombre pero distinta lista de parámetros.",
+      "distractors": ["encapsulamiento", "tipado", "acoplamiento"],
+      "explanation": "La sobrecarga se resuelve estáticamente por firma; el polimorfismo se resuelve dinámicamente por tipo real del receptor."
+    },
+    {
+      "id": "u3_1_d01",
+      "type": "puzzle_diagram",
+      "topic": "Estereotipos de Análisis BCE (Jacobson)",
+      "svgTemplate": "bce_stereotypes",
+      "caption": "Identificá el rol de cada estereotipo de clase de análisis según su símbolo BCE.",
+      "slots": [
+        { "id": "bce1", "label": "Interfaz / Frontera (Boundary)", "correctPiece": "Media la interacción entre actores externos y el sistema", "hint": "Símbolo |-O" },
+        { "id": "bce2", "label": "Control (Control)", "correctPiece": "Coordina el flujo y reglas de un caso de uso", "hint": "Símbolo círculo con flecha" },
+        { "id": "bce3", "label": "Entidad (Entity)", "correctPiece": "Modela información persistente y lógica de negocio", "hint": "Símbolo círculo sobre línea base" }
+      ],
+      "distractors": [
+        "Gestiona la conexión física de red y sockets",
+        "Representa únicamente tablas SQL sin comportamiento"
+      ],
+      "explanation": "La tríada Boundary-Control-Entity separa la interfaz, la coordinación de casos de uso y los datos del dominio."
+    }
+  ]
+}

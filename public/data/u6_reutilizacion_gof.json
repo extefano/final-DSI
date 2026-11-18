@@ -1,0 +1,89 @@
+{
+  "unitId": "u6",
+  "title": "Unidad 6: Reutilización de Software y Patrones GoF",
+  "exercises": [
+    {
+      "id": "u6_c01",
+      "type": "cloze",
+      "topic": "Reutilización de Software",
+      "template": "La reutilización sistemática mejora la productividad y fiabilidad aprovechando artefactos probados como bibliotecas de clases, {{frameworks}} (que invierten el control de flujo), paquetes comerciales {{COTS}} y {{patrones}} de diseño.",
+      "distractors": ["compiladores", "editores", "scripts"],
+      "explanation": "A diferencia de una biblioteca invocada por tu código, un framework llama a tu código (Principio de Hollywood)."
+    },
+    {
+      "id": "u6_c02",
+      "type": "cloze",
+      "topic": "Clasificación GoF (Gamma et al.)",
+      "template": "El catálogo clásico de la Banda de los Cuatro (GoF) clasifica 23 patrones según su propósito en tres categorías: {{Creacionales}} (instanciación), {{Estructurales}} (composición de clases y objetos) y de {{Comportamiento}} (algoritmos y asignación de responsabilidades).",
+      "distractors": ["Distribuidos", "Persistentes", "Arquitectónicos"],
+      "explanation": "Además de propósito, cada patrón tiene alcance de clase (herencia estática) o de objeto (composición dinámica)."
+    },
+    {
+      "id": "u6_c03",
+      "type": "cloze",
+      "topic": "Patrones Creacionales GoF",
+      "template": "Entre los patrones creacionales, {{Singleton}} asegura una única instancia con acceso global; {{Factory Method}} delega la creación a subclases; y {{Abstract Factory}} crea familias de objetos relacionados sin especificar sus clases concretas.",
+      "distractors": ["Adapter", "Strategy", "Proxy"],
+      "explanation": "Estos patrones ocultan la lógica concreta de instanciación (new) detrás de interfaces de creación."
+    },
+    {
+      "id": "u6_c04",
+      "type": "cloze",
+      "topic": "Adapter y Facade (Estructurales)",
+      "template": "El patrón estructural {{Adapter}} convierte la interfaz de una clase existente en otra esperada por el cliente; mientras que {{Facade}} ofrece una interfaz unificada y simplificada frente a un subsistema complejo.",
+      "distractors": ["Iterator", "Singleton", "State"],
+      "explanation": "Adapter resuelve incompatibilidad de contratos; Facade reduce la complejidad de uso de múltiples clases."
+    },
+    {
+      "id": "u6_c05",
+      "type": "cloze",
+      "topic": "Composite y Proxy (Estructurales)",
+      "template": "{{Composite}} organiza objetos en estructuras de {{árbol}} para tratar de manera uniforme objetos individuales y compuestos; mientras que {{Proxy}} provee un sustituto o representante para controlar el acceso a otro objeto.",
+      "distractors": ["grafo", "pila", "Observer"],
+      "explanation": "Proxy se usa frecuentemente para carga diferida (virtual), control de acceso (protección) o comunicación remota."
+    },
+    {
+      "id": "u6_c06",
+      "type": "cloze",
+      "topic": "Observer e Iterator (Comportamiento)",
+      "template": "El patrón {{Observer}} define una dependencia uno-a-muchos para notificar automáticamente a suscriptores ante cambios de estado; mientras que {{Iterator}} permite recorrer secuencialmente una colección sin exponer su {{representación}} interna.",
+      "distractors": ["Abstract Factory", "Facade", "herencia"],
+      "explanation": "Observer es la base de sistemas reactivos y arquitecturas orientadas a eventos."
+    },
+    {
+      "id": "u6_c07",
+      "type": "cloze",
+      "topic": "Strategy vs State (Comportamiento)",
+      "template": "{{Strategy}} encapsula una familia de algoritmos intercambiables seleccionados por el cliente; en cambio, {{State}} permite a un objeto alterar su comportamiento cuando cambia su {{estado interno}}, pareciendo cambiar de clase.",
+      "distractors": ["Composite", "Builder", "constructor"],
+      "explanation": "Aunque comparten una estructura UML similar, en Strategy el cliente elige el algoritmo y en State las transiciones ocurren internamente."
+    },
+    {
+      "id": "u6_c08",
+      "type": "cloze",
+      "topic": "Formato de Documentación de Patrones",
+      "template": "Inspirados en Christopher Alexander y Gamma, los patrones se documentan con secciones estandarizadas que describen: nombre, {{intención}}, motivación, aplicabilidad, {{estructura}} (UML), participantes y {{consecuencias}} (ventajas y compromisos).",
+      "distractors": ["presupuesto", "cronograma", "hardware"],
+      "explanation": "Conocer las consecuencias y compromisos de cada patrón evita aplicarlos de forma mecánica donde no corresponden."
+    },
+    {
+      "id": "u6_d01",
+      "type": "puzzle_diagram",
+      "topic": "Catálogo de Patrones GoF",
+      "svgTemplate": "gof_matrix",
+      "caption": "Clasificá cada patrón GoF y su intención principal dentro del catálogo.",
+      "slots": [
+        { "id": "gof1", "label": "Abstract Factory (Creacional)", "correctPiece": "Crear familias de productos compatibles sin acoplarse a clases concretas" },
+        { "id": "gof2", "label": "Composite (Estructural)", "correctPiece": "Tratar hojas y contenedores en jerarquías de árbol uniformemente" },
+        { "id": "gof3", "label": "Facade (Estructural)", "correctPiece": "Brindar una puerta de entrada simple a un subsistema complejo" },
+        { "id": "gof4", "label": "Observer (Comportamiento)", "correctPiece": "Notificar cambios de un sujeto a múltiples dependientes" },
+        { "id": "gof5", "label": "Strategy (Comportamiento)", "correctPiece": "Intercambiar algoritmos encapsulados en tiempo de ejecución" }
+      ],
+      "distractors": [
+        "Garantizar la replicación síncrona de bases SQL",
+        "Convertir diagramas UML directamente en SQL"
+      ],
+      "explanation": "Dominar la intención de cada patrón GoF permite elegir el diseño correcto ante problemas recurrentes."
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "unitId": "u4",
+  "title": "Unidad 4: Arquitectura de Software y Sistemas Distribuidos",
+  "exercises": [
+    {
+      "id": "u4_c01",
+      "type": "cloze",
+      "topic": "Definición de Arquitectura (Bass et al.)",
+      "template": "Para Bass, Clements y Kazman, la arquitectura de software es el conjunto de estructuras necesarias para razonar sobre el sistema, compuestas por {{elementos}} de software, las {{relaciones}} entre ellos y las {{propiedades}} de ambos.",
+      "distractors": ["algoritmos", "pantallas", "pruebas"],
+      "explanation": "Todo sistema posee arquitectura y sus decisiones tempranas condicionan fuertemente los atributos de calidad."
+    },
+    {
+      "id": "u4_c02",
+      "type": "cloze",
+      "topic": "Tres Categorías de Estructuras Arquitectónicas",
+      "template": "Las vistas arquitectónicas se agrupan en tres grandes categorías: estructuras de {{módulos}} (unidades estáticas de código), de {{componentes y conectores}} (comportamiento en ejecución) y de {{asignación}} (mapeo al entorno físico y equipos).",
+      "distractors": ["interfaz", "negocio", "herencia"],
+      "explanation": "Cada estructura responde a inquietudes distintas de los interesados (desarrolladores, operadores, arquitectos)."
+    },
+    {
+      "id": "u4_c03",
+      "type": "cloze",
+      "topic": "Escenarios de Atributo de Calidad (6 Partes)",
+      "template": "Un escenario de atributo de calidad de Bass consta de seis partes: fuente del estímulo, {{estímulo}}, entorno, artefacto, {{respuesta}} y {{métrica}} de la respuesta.",
+      "distractors": ["presupuesto", "lenguaje", "prioridad"],
+      "explanation": "Sin una métrica medible (ej. latencia < 200 ms), un requisito de calidad resulta ambiguo e inverificable."
+    },
+    {
+      "id": "u4_c04",
+      "type": "cloze",
+      "topic": "Disponibilidad: Falla, Error y Fallo",
+      "template": "En confiabilidad, una {{falla}} (defecto latente en código o hardware) puede manifestarse produciendo un {{error}} (estado interno inválido), el cual si se propaga al exterior provoca un {{fallo}} observable del servicio.",
+      "distractors": ["táctica", "parche", "bloqueo"],
+      "explanation": "Las tácticas de disponibilidad buscan detectar fallas, recuperarse de ellas o prevenir su ocurrencia."
+    },
+    {
+      "id": "u4_c05",
+      "type": "cloze",
+      "topic": "Patrones para Modificabilidad y Flujo",
+      "template": "El patrón en {{capas}} aisla cambios tecnológicos entre niveles; {{publicador-suscriptor}} desacopla emisores de eventos mediante buses; {{tuberías y filtros}} procesa flujos secuenciales de datos; y {{microkernel}} separa un núcleo mínimo de plugins extensibles.",
+      "distractors": ["monolito", "singleton", "maestro-esclavo"],
+      "explanation": "Cada patrón favorece ciertos atributos de calidad a costa de posibles penalizaciones en otros (como latencia en capas)."
+    },
+    {
+      "id": "u4_c06",
+      "type": "cloze",
+      "topic": "Tácticas y Patrones de Performance",
+      "template": "Para sostener alto rendimiento y carga concurrente se emplean patrones como {{Load Balancer}} (reparto de tráfico), {{Throttling}} (limitación de tasa de peticiones), {{Service Mesh}} (gestión de red entre servicios) y {{Map-Reduce}} (procesamiento distribuido).",
+      "distractors": ["Facade", "Memento", "Adapter"],
+      "explanation": "Las tácticas de desempeño apuntan a controlar la demanda de recursos o administrar eficientemente los recursos disponibles."
+    },
+    {
+      "id": "u4_c07",
+      "type": "cloze",
+      "topic": "Sistemas Distribuidos: Middleware y Capas",
+      "template": "En sistemas distribuidos, el {{middleware}} oculta la heterogeneidad de hardware y red entre nodos; las arquitecturas {{2-Tier}} separan cliente y base de datos, mientras que {{Multi-Tier}} intercala servidores de aplicación y lógica de negocio.",
+      "distractors": ["compilador", "kernel", "driver"],
+      "explanation": "El middleware provee servicios comunes como llamadas remotas (RPC), mensajería y seguridad transparente."
+    },
+    {
+      "id": "u4_c08",
+      "type": "cloze",
+      "topic": "SOA vs Microservicios",
+      "template": "Mientras {{SOA}} suele compartir una base de datos central e integrar servicios mediante un bus empresarial (ESB) y estándares como SOAP/WSDL, los {{microservicios}} promueven servicios pequeños, autónomos, con base de datos propia y despliegue {{independiente}}.",
+      "distractors": ["acoplado", "manual", "sincrónico"],
+      "explanation": "Los microservicios facilitan la escalabilidad y evolución independiente a cambio de mayor complejidad operativa y de red."
+    },
+    {
+      "id": "u4_p01",
+      "type": "puzzle_grid",
+      "topic": "Arquitectura en Capas",
+      "image": "",
+      "diagramKind": "clean_architecture",
+      "cols": 2,
+      "rows": 2,
+      "caption": "Ordená la jerarquía de niveles en una arquitectura en capas.",
+      "explanation": "Presentación arriba → Lógica de Negocio → Persistencia → Infraestructura en la base."
+    },
+    {
+      "id": "u4_d01",
+      "type": "puzzle_diagram",
+      "topic": "Estilos Arquitectónicos y Distribuidos",
+      "svgTemplate": "arch_styles",
+      "caption": "Emparejá cada estilo arquitectónico con su rasgo estructural característico.",
+      "slots": [
+        { "id": "a1", "label": "Repositorio / Pizarrón", "correctPiece": "Múltiples componentes leen y escriben un almacén central" },
+        { "id": "a2", "label": "Tuberías y Filtros", "correctPiece": "Transformaciones independientes conectadas por flujos" },
+        { "id": "a3", "label": "Peer-to-Peer (P2P)", "correctPiece": "Nodos simétricos actúan como cliente y servidor a la vez" },
+        { "id": "a4", "label": "Maestro-Esclavo", "correctPiece": "Un coordinador reparte subtareas idénticas a trabajadores" },
+        { "id": "a5", "label": "Microservicios", "correctPiece": "Unidades desplegables autónomas con almacenamiento propio" }
+      ],
+      "distractors": [
+        "Todo el código compilado en un único binario acoplado",
+        "Comunicación exclusiva mediante archivos locales compartidos"
+      ],
+      "explanation": "Seleccionar el estilo arquitectónico implica equilibrar modificabilidad, desempeño, escalabilidad y complejidad operativa."
+    }
+  ]
+}
