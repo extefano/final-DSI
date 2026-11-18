@@ -5,6 +5,7 @@ import { SessionModal } from './components/SessionModal';
 import { StudySessionView } from './components/StudySessionView';
 import { UnitCatalogView } from './components/UnitCatalogView';
 import { useInputMode } from './hooks/useInputMode';
+import { useCloudSync } from './hooks/useCloudSync';
 import { useProgress } from './hooks/useProgress';
 import { useTheme } from './hooks/useTheme';
 import type {
@@ -37,6 +38,27 @@ export default function App() {
     createProfile,
     deleteProfile,
   } = useProgress();
+
+  const handleApplyCloudState = useCallback(
+    (cloudProgress: ProgressState, cloudTheme?: ThemeMode) => {
+      replaceProgress(cloudProgress);
+      if (cloudTheme) setTheme(cloudTheme);
+    },
+    [replaceProgress, setTheme]
+  );
+
+  const {
+    user: cloudUser,
+    syncing: cloudSyncing,
+    authError: cloudAuthError,
+    signInWithGoogle,
+    signOutUser,
+    pushProgressToCloud,
+  } = useCloudSync({
+    localProgress: progress,
+    theme,
+    onApplyCloudState: handleApplyCloudState,
+  });
 
   const [catalog, setCatalog] = useState<CatalogIndex | null>(null);
   const [unitsCache, setUnitsCache] = useState<Record<string, UnitData>>({});
@@ -132,13 +154,34 @@ export default function App() {
       .filter((ex): ex is Exercise => Boolean(ex));
   }, [reviewIds, allExercisesMap]);
 
+  const handleRecordOutcome = useCallback(
+    (exerciseId: string, isCorrect: boolean) => {
+      const nextProgress = recordOutcome(exerciseId, isCorrect);
+      void pushProgressToCloud(nextProgress, theme);
+    },
+    [recordOutcome, pushProgressToCloud, theme]
+  );
+
+  const handleToggleTheme = useCallback(() => {
+    const nextTheme: ThemeMode = theme === 'dark' ? 'light' : 'dark';
+    toggleTheme();
+    void pushProgressToCloud(progress, nextTheme);
+  }, [theme, toggleTheme, pushProgressToCloud, progress]);
+
   const handleImportState = useCallback(
     (incoming: ProgressState, incomingTheme?: ThemeMode) => {
-      replaceProgress(incoming);
+      const nextProgress = replaceProgress(incoming);
+      const nextTheme = incomingTheme ?? theme;
       if (incomingTheme) setTheme(incomingTheme);
+      void pushProgressToCloud(nextProgress, nextTheme);
     },
-    [replaceProgress, setTheme]
+    [replaceProgress, setTheme, theme, pushProgressToCloud]
   );
+
+  const handleResetProgress = useCallback(() => {
+    const nextProgress = resetProgress();
+    void pushProgressToCloud(nextProgress, theme);
+  }, [resetProgress, pushProgressToCloud, theme]);
 
   const handleApplyHashSession = (asNewProfile: boolean) => {
     if (!pendingHashSession) return;
@@ -164,7 +207,7 @@ export default function App() {
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-[#0B1120] dark:text-slate-100 transition-colors">
       <Navbar
         theme={theme}
-        onToggleTheme={toggleTheme}
+        onToggleTheme={handleToggleTheme}
         onOpenSyncModal={() => setSyncModalOpen(true)}
         activeView={activeNavView}
         onSelectUnits={() => setRoute({ view: 'units' })}
@@ -248,6 +291,9 @@ export default function App() {
           progress={progress}
           reviewCount={reviewIds.length}
           activeProfileName={activeProfile.name}
+          cloudUserEmail={cloudUser?.email ?? null}
+          cloudSyncing={cloudSyncing}
+          onSignInGoogle={() => void signInWithGoogle()}
           onOpenProfiles={() => setSyncModalOpen(true)}
           onStartUnit={(unit) => setRoute({ view: 'study', unit })}
           onStartReview={() => setRoute({ view: 'review' })}
@@ -260,7 +306,7 @@ export default function App() {
           exercises={unitsCache[route.unit.unitId]?.exercises ?? []}
           isMobileOrTouch={isMobileOrTouch}
           progress={progress}
-          onOutcome={recordOutcome}
+          onOutcome={handleRecordOutcome}
           onExit={() => setRoute({ view: 'units' })}
           onJumpToReview={() => setRoute({ view: 'review' })}
         />
@@ -272,7 +318,7 @@ export default function App() {
           exercises={reviewExercises}
           isMobileOrTouch={isMobileOrTouch}
           progress={progress}
-          onOutcome={recordOutcome}
+          onOutcome={handleRecordOutcome}
           onExit={() => setRoute({ view: 'units' })}
           onJumpToReview={() => setRoute({ view: 'review' })}
         />
@@ -281,6 +327,11 @@ export default function App() {
       <SessionModal
         open={syncModalOpen}
         onClose={() => setSyncModalOpen(false)}
+        cloudUser={cloudUser}
+        cloudSyncing={cloudSyncing}
+        cloudAuthError={cloudAuthError}
+        onSignInGoogle={() => void signInWithGoogle()}
+        onSignOutGoogle={() => void signOutUser()}
         profiles={profiles}
         activeProfile={activeProfile}
         onSwitchProfile={switchProfile}
@@ -289,7 +340,7 @@ export default function App() {
         progress={progress}
         theme={theme}
         onImportState={handleImportState}
-        onResetProgress={resetProgress}
+        onResetProgress={handleResetProgress}
       />
     </div>
   );

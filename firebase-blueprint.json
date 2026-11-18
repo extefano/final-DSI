@@ -1,0 +1,75 @@
+{
+  "entities": {
+    "UserProgress": {
+      "title": "UserProgress",
+      "description": "Cloud-synced study progress, error review queue, and streak metrics for a single authenticated student.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID of the owning student.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "completedIds": {
+          "type": "array",
+          "description": "List of completed exercise identifiers across all units."
+        },
+        "reviewQueue": {
+          "type": "object",
+          "description": "Map of failed exerciseId to consecutive correct count (0 or 1; removed at 2)."
+        },
+        "streak": {
+          "type": "integer",
+          "description": "Current consecutive correct answers streak."
+        },
+        "bestStreak": {
+          "type": "integer",
+          "description": "Best consecutive correct answers streak achieved."
+        },
+        "totalAttempts": {
+          "type": "integer",
+          "description": "Total number of evaluated exercise attempts."
+        },
+        "totalCorrect": {
+          "type": "integer",
+          "description": "Total number of correct exercise evaluations."
+        },
+        "theme": {
+          "type": "string",
+          "enum": ["light", "dark"],
+          "description": "Preferred UI color theme."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the cloud progress record was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of the latest cloud progress update."
+        }
+      },
+      "required": [
+        "uid",
+        "completedIds",
+        "reviewQueue",
+        "streak",
+        "bestStreak",
+        "totalAttempts",
+        "totalCorrect",
+        "theme",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProgress" },
+      "description": "Stores isolated per-student study progress synchronized automatically across devices."
+    }
+  }
+}

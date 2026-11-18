@@ -33,38 +33,29 @@ function base64UrlToBytes(base64url: string): Uint8Array {
   return bytes;
 }
 
-async function compressDeflateRaw(text: string): Promise<Uint8Array> {
-  const encoder = new TextEncoder();
-  const inputBytes = encoder.encode(text);
-
-  if (typeof CompressionStream === 'undefined') {
-    return inputBytes;
-  }
-
-  const cs = new CompressionStream('deflate-raw');
-  const writer = cs.writable.getWriter();
-  await writer.write(inputBytes);
-  await writer.close();
-
-  const response = new Response(cs.readable);
-  const buffer = await response.arrayBuffer();
+async function compressWithStream(
+  inputBytes: Uint8Array,
+  format: 'deflate-raw' | 'deflate'
+): Promise<Uint8Array> {
+  const copy = new Uint8Array(inputBytes.byteLength);
+  copy.set(inputBytes);
+  const compressedStream = new Blob([copy])
+    .stream()
+    .pipeThrough(new CompressionStream(format));
+  const buffer = await new Response(compressedStream).arrayBuffer();
   return new Uint8Array(buffer);
 }
 
-async function decompressDeflateRaw(bytes: Uint8Array): Promise<string> {
-  if (typeof DecompressionStream === 'undefined') {
-    return new TextDecoder().decode(bytes);
-  }
-
-  const ds = new DecompressionStream('deflate-raw');
-  const writer = ds.writable.getWriter();
+async function decompressWithStream(
+  bytes: Uint8Array,
+  format: 'deflate-raw' | 'deflate'
+): Promise<string> {
   const copy = new Uint8Array(bytes.byteLength);
   copy.set(bytes);
-  await writer.write(copy);
-  await writer.close();
-
-  const response = new Response(ds.readable);
-  return response.text();
+  const decompressedStream = new Blob([copy])
+    .stream()
+    .pipeThrough(new DecompressionStream(format));
+  return new Response(decompressedStream).text();
 }
 
 export async function encodeSessionCode(
@@ -83,9 +74,23 @@ export async function encodeSessionCode(
   };
 
   const json = JSON.stringify(payload);
-  const compressed = await compressDeflateRaw(json);
-  const flag = typeof CompressionStream !== 'undefined' ? 'z' : 'r';
-  return `${CODE_PREFIX}${flag}${bytesToBase64Url(compressed)}`;
+  const inputBytes = new TextEncoder().encode(json);
+
+  if (typeof CompressionStream !== 'undefined') {
+    for (const [flag, format] of [
+      ['z', 'deflate-raw'],
+      ['d', 'deflate'],
+    ] as const) {
+      try {
+        const compressed = await compressWithStream(inputBytes, format);
+        return `${CODE_PREFIX}${flag}${bytesToBase64Url(compressed)}`;
+      } catch {
+        // Try next compression format or raw fallback
+      }
+    }
+  }
+
+  return `${CODE_PREFIX}r${bytesToBase64Url(inputBytes)}`;
 }
 
 export function extractSessionCode(rawInput: string): string {
@@ -124,12 +129,13 @@ export async function decodeSessionCode(rawInput: string): Promise<
 
     let jsonText: string;
     if (modeFlag === 'z') {
-      jsonText = await decompressDeflateRaw(bytes);
+      jsonText = await decompressWithStream(bytes, 'deflate-raw');
+    } else if (modeFlag === 'd') {
+      jsonText = await decompressWithStream(bytes, 'deflate');
     } else if (modeFlag === 'r') {
       jsonText = new TextDecoder().decode(bytes);
     } else {
-      // Backwards tolerance if flag omitted
-      jsonText = await decompressDeflateRaw(base64UrlToBytes(body));
+      jsonText = await decompressWithStream(base64UrlToBytes(body), 'deflate-raw');
     }
 
     const parsed = JSON.parse(jsonText) as Partial<CompactSessionPayload>;

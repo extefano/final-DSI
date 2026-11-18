@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowRight, CheckCircle2, Flame, Layers, RotateCw } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Cloud, Flame, Layers, RotateCw } from 'lucide-react';
 import type { ProgressState, UnitCatalogItem } from '../types/dsi';
 
 interface UnitCatalogViewProps {
@@ -8,6 +8,9 @@ interface UnitCatalogViewProps {
   progress: ProgressState;
   reviewCount: number;
   activeProfileName: string;
+  cloudUserEmail: string | null;
+  cloudSyncing: boolean;
+  onSignInGoogle: () => void;
   onOpenProfiles: () => void;
   onStartUnit: (unit: UnitCatalogItem) => void;
   onStartReview: () => void;
@@ -51,6 +54,9 @@ export function UnitCatalogView({
   progress,
   reviewCount,
   activeProfileName,
+  cloudUserEmail,
+  cloudSyncing,
+  onSignInGoogle,
   onOpenProfiles,
   onStartUnit,
   onStartReview,
@@ -95,16 +101,40 @@ export function UnitCatalogView({
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
               <span>Diseño de Sistemas de Información · Apunte Completo (240 págs.)</span>
               <span aria-hidden="true" className="text-slate-400">·</span>
-              <span className="text-slate-600 dark:text-slate-300">
-                Perfil: <strong className="text-slate-900 dark:text-white">{activeProfileName}</strong>
-              </span>
-              <button
-                type="button"
-                onClick={onOpenProfiles}
-                className="text-blue-600 dark:text-blue-400 hover:underline underline-offset-2 font-bold"
-              >
-                Cambiar perfil
-              </button>
+              {cloudUserEmail ? (
+                <button
+                  type="button"
+                  onClick={onOpenProfiles}
+                  className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline underline-offset-2 font-bold"
+                >
+                  <Cloud className="h-3.5 w-3.5" />
+                  <span>
+                    {cloudSyncing ? 'Sincronizando nube...' : `Nube: ${cloudUserEmail}`}
+                  </span>
+                </button>
+              ) : (
+                <>
+                  <span className="text-slate-600 dark:text-slate-300">
+                    Perfil: <strong className="text-slate-900 dark:text-white">{activeProfileName}</strong>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={onOpenProfiles}
+                    className="text-slate-600 dark:text-slate-300 hover:underline underline-offset-2 font-bold"
+                  >
+                    Cambiar perfil
+                  </button>
+                  <span aria-hidden="true" className="text-slate-400">·</span>
+                  <button
+                    type="button"
+                    onClick={onSignInGoogle}
+                    className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline underline-offset-2 font-bold"
+                  >
+                    <Cloud className="h-3.5 w-3.5" />
+                    <span>Conectar Google (sync automático)</span>
+                  </button>
+                </>
+              )}
             </div>
             <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
               Entrená cada unidad con definiciones y diagramas activos

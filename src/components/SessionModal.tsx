@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
+import type { User } from 'firebase/auth';
 import {
   Check,
+  Cloud,
   Copy,
   Download,
   Link as LinkIcon,
+  LogOut,
   Plus,
   RotateCcw,
   Trash2,
@@ -21,6 +24,11 @@ import {
 interface SessionModalProps {
   open: boolean;
   onClose: () => void;
+  cloudUser: User | null;
+  cloudSyncing: boolean;
+  cloudAuthError: string | null;
+  onSignInGoogle: () => void;
+  onSignOutGoogle: () => void;
   profiles: StudyProfile[];
   activeProfile: StudyProfile;
   onSwitchProfile: (profileId: string) => void;
@@ -35,6 +43,11 @@ interface SessionModalProps {
 export function SessionModal({
   open,
   onClose,
+  cloudUser,
+  cloudSyncing,
+  cloudAuthError,
+  onSignInGoogle,
+  onSignOutGoogle,
   profiles,
   activeProfile,
   onSwitchProfile,
@@ -77,17 +90,39 @@ export function SessionModal({
     return () => {
       active = false;
     };
-  }, [open, progress, theme]);
+  }, [open, activeProfile.id, progress, theme]);
 
   if (!open) return null;
 
   const handleCopy = async (text: string, target: 'code' | 'url') => {
     if (!text) return;
     try {
-      await navigator.clipboard.writeText(text);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        throw new Error('Clipboard API unavailable');
+      }
       setCopiedTarget(target);
       setTimeout(() => setCopiedTarget(null), 1800);
     } catch {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        const ok = document.execCommand('copy');
+        ta.remove();
+        if (ok) {
+          setCopiedTarget(target);
+          setTimeout(() => setCopiedTarget(null), 1800);
+          return;
+        }
+      } catch {
+        // Ignore fallback failure
+      }
       setStatusMsg({
         type: 'err',
         text: 'No se pudo copiar automáticamente; seleccioná el texto manualmente.',
@@ -205,6 +240,62 @@ export function SessionModal({
         </div>
 
         <div className="mt-5 space-y-6">
+          {/* Automatic Cloud Sync via Google Sign-In + Firestore */}
+          <section className="space-y-3 rounded-2xl border-2 border-blue-200 dark:border-blue-900/70 bg-blue-50/70 dark:bg-blue-950/30 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
+                <Cloud className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <span>Sincronización automática en la nube</span>
+              </h3>
+              {cloudUser && (
+                <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400">
+                  {cloudSyncing ? 'Sincronizando...' : 'Activa en tiempo real'}
+                </span>
+              )}
+            </div>
+
+            {cloudUser ? (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
+                    Conectado como {cloudUser.email}
+                  </p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300">
+                    Iniciá sesión con esta misma cuenta en tu celular para seguir exactamente donde dejaste.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={onSignOutGoogle}
+                  className="duo-btn inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 border-b-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 px-3.5 text-xs font-bold text-slate-700 dark:text-slate-200"
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                  <span>Desconectar</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                  Conectá tu cuenta de Google en la PC y en el celular para guardar y continuar tu avance automáticamente. Tu compañera puede entrar con su propia cuenta sin mezclarse.
+                </p>
+                <button
+                  type="button"
+                  onClick={onSignInGoogle}
+                  className="duo-btn inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-xl border-2 border-blue-600 border-b-4 bg-blue-600 hover:bg-blue-500 px-4 text-xs sm:text-sm font-bold text-white whitespace-nowrap"
+                >
+                  <Cloud className="h-4 w-4" />
+                  <span>Conectar con Google</span>
+                </button>
+              </div>
+            )}
+
+            {cloudAuthError && (
+              <div className="rounded-xl border border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/60 p-2.5 text-xs font-semibold text-rose-800 dark:text-rose-200">
+                {cloudAuthError}
+              </div>
+            )}
+          </section>
+
           {/* Local Independent Profiles */}
           <section className="space-y-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 p-4">
             <div className="flex items-center justify-between gap-2">

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ProgressState, StudyProfile } from '../types/dsi';
 
 const LEGACY_PROGRESS_KEY = 'estudio_dsi_progress_v1';
@@ -89,6 +89,8 @@ function loadInitialStore(): ProfilesStore {
 
 export function useProgress() {
   const [store, setStore] = useState<ProfilesStore>(loadInitialStore);
+  const storeRef = useRef(store);
+  storeRef.current = store;
 
   useEffect(() => {
     try {
@@ -103,7 +105,12 @@ export function useProgress() {
   const progress = activeProfile.progress;
 
   const updateActiveProgress = useCallback(
-    (updater: (prev: ProgressState) => ProgressState) => {
+    (updater: (prev: ProgressState) => ProgressState): ProgressState => {
+      const currStore = storeRef.current;
+      const currProfile =
+        currStore.profiles.find((p) => p.id === currStore.activeProfileId) ??
+        currStore.profiles[0];
+      const nextProgress = updater(currProfile.progress);
       setStore((prevStore) => ({
         ...prevStore,
         profiles: prevStore.profiles.map((p) =>
@@ -112,13 +119,14 @@ export function useProgress() {
             : p
         ),
       }));
+      return nextProgress;
     },
     []
   );
 
   const recordOutcome = useCallback(
-    (exerciseId: string, isCorrect: boolean) => {
-      updateActiveProgress((prev) => {
+    (exerciseId: string, isCorrect: boolean): ProgressState => {
+      return updateActiveProgress((prev) => {
         const nextCompleted = new Set(prev.completedIds);
         const nextReview = { ...prev.reviewQueue };
         let nextStreak = prev.streak;
@@ -159,8 +167,8 @@ export function useProgress() {
   );
 
   const replaceProgress = useCallback(
-    (incoming: ProgressState) => {
-      updateActiveProgress(() => ({
+    (incoming: ProgressState): ProgressState => {
+      return updateActiveProgress(() => ({
         ...incoming,
         lastUpdated: Date.now(),
       }));
@@ -168,8 +176,8 @@ export function useProgress() {
     [updateActiveProgress]
   );
 
-  const resetProgress = useCallback(() => {
-    updateActiveProgress(() => createEmptyProgress());
+  const resetProgress = useCallback((): ProgressState => {
+    return updateActiveProgress(() => createEmptyProgress());
   }, [updateActiveProgress]);
 
   const switchProfile = useCallback((profileId: string) => {
