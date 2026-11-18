@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Keyboard, LayoutGrid, RotateCcw } from 'lucide-react';
 import type { ClozeExercise } from '../types/dsi';
-import { normalizeAnswer, parseClozeTemplate, shuffleArray } from '../utils/textNormalize';
+import {
+  evaluateClozeSlots,
+  parseClozeTemplate,
+  shuffleArray,
+} from '../utils/textNormalize';
 
 interface ClozeEngineProps {
   exercise: ClozeExercise;
@@ -78,17 +82,23 @@ export function ClozeEngine({
     onResultReady(isReady);
   }, [isReady, onResultReady]);
 
+  const currentUserAnswers = useMemo(
+    () => (useTileMode ? slotTiles.map((t) => t?.word ?? '') : typedValues),
+    [useTileMode, slotTiles, typedValues]
+  );
+
+  const evaluation = useMemo(
+    () => evaluateClozeSlots(answers, currentUserAnswers, exercise.unorderedGroups),
+    [answers, currentUserAnswers, exercise.unorderedGroups]
+  );
+
+  const hasUnorderedGroups = Boolean(
+    exercise.unorderedGroups && exercise.unorderedGroups.length > 0
+  );
+
   const evaluateCurrent = () => {
-    const userAnswers = useTileMode
-      ? slotTiles.map((t) => t?.word ?? '')
-      : typedValues;
-
-    const allCorrect = answers.every((expected, idx) => {
-      return normalizeAnswer(userAnswers[idx] ?? '') === normalizeAnswer(expected);
-    });
-
     const summary = answers.join(' · ');
-    onEvaluate(allCorrect, summary);
+    onEvaluate(evaluation.allCorrect, summary);
   };
 
   // Trigger evaluation when parent Check button increments submitSignal
@@ -144,11 +154,18 @@ export function ClozeEngine({
     <div className="space-y-6">
       {/* Mode indicator and optional Desktop tile toggle */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
-          {useTileMode
-            ? 'Tocá o arrastrá las fichas correctas para completar la definición.'
-            : 'Escribí los términos exactos en los espacios (sin preocuparte por mayúsculas o tildes).'}
-        </p>
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
+            {useTileMode
+              ? 'Tocá o arrastrá las fichas correctas para completar la definición.'
+              : 'Escribí los términos exactos en los espacios (sin preocuparte por mayúsculas o tildes).'}
+          </p>
+          {hasUnorderedGroups && (
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Los términos equivalentes dentro de una misma enumeración aceptan cualquier orden.
+            </p>
+          )}
+        </div>
 
         <div className="flex items-center gap-2">
           {!isMobileOrTouch && (
@@ -198,9 +215,8 @@ export function ClozeEngine({
           if (useTileMode) {
             const placed = slotTiles[slotIdx];
             const isSlotCorrect =
-              checked &&
-              placed !== null &&
-              normalizeAnswer(placed.word) === normalizeAnswer(expected);
+              checked && placed !== null && Boolean(evaluation.slotCorrect[slotIdx]);
+            const expectedLabel = evaluation.slotExpected[slotIdx] ?? expected;
 
             return (
               <span
@@ -230,7 +246,7 @@ export function ClozeEngine({
                 </button>
                 {checked && !isSlotCorrect && (
                   <span className="ml-1.5 inline-flex items-center rounded-lg bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700 px-2 py-0.5 text-xs font-bold text-emerald-800 dark:text-emerald-300">
-                    {expected}
+                    {expectedLabel}
                   </span>
                 )}
               </span>
@@ -239,8 +255,8 @@ export function ClozeEngine({
 
           // Desktop inline input mode
           const currentVal = typedValues[slotIdx] ?? '';
-          const isInputCorrect =
-            checked && normalizeAnswer(currentVal) === normalizeAnswer(expected);
+          const isInputCorrect = checked && Boolean(evaluation.slotCorrect[slotIdx]);
+          const expectedLabel = evaluation.slotExpected[slotIdx] ?? expected;
           const charWidth = Math.max(expected.length, currentVal.length, 8);
 
           return (
@@ -282,7 +298,7 @@ export function ClozeEngine({
               />
               {checked && !isInputCorrect && (
                 <span className="ml-1.5 inline-flex items-center rounded-lg bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700 px-2 py-0.5 text-xs font-bold text-emerald-800 dark:text-emerald-300">
-                  {expected}
+                  {expectedLabel}
                 </span>
               )}
             </span>

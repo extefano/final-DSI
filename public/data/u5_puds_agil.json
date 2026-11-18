@@ -8,6 +8,7 @@
       "topic": "Las 4 P + H en PUDS/RUP",
       "template": "La gestión de proyectos en el Proceso Unificado de Desarrollo de Software (PUDS/RUP) equilibra cinco dimensiones clave conocidas como 4P+H: {{Personas}}, {{Producto}}, {{Proceso}}, {{Proyecto}} y {{Herramientas}}.",
       "distractors": ["Presupuesto", "Plataforma", "Patrones"],
+      "unorderedGroups": [[0, 1, 2, 3]],
       "explanation": "Además, el Proceso Unificado se caracteriza por ser guiado por casos de uso, centrado en la arquitectura e iterativo e incremental."
     },
     {
@@ -40,6 +41,7 @@
       "topic": "Prácticas de Extreme Programming (XP)",
       "template": "Extreme Programming (XP) lleva al extremo las buenas prácticas técnicas mediante desarrollo guiado por pruebas ({{TDD}}), {{programación en parejas}}, {{integración continua}} y {{refactorización}} constante del código.",
       "distractors": ["diagramas formales", "documentación UML", "prototipos desechables"],
+      "unorderedGroups": [[1, 2]],
       "explanation": "XP se apoya en cuatro valores centrales: comunicación, simplicidad, retroalimentación y coraje (más respeto)."
     },
     {

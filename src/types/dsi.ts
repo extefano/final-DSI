@@ -6,6 +6,7 @@ export interface ClozeExercise {
   topic: string;
   template: string;
   distractors: string[];
+  unorderedGroups?: number[][];
   explanation?: string;
 }
 

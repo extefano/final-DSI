@@ -16,6 +16,7 @@
       "topic": "Bloques de Construcción de UML",
       "template": "El vocabulario de UML se organiza en tres bloques de construcción: {{cosas}} (estructurales, de comportamiento, agrupación y anotación), {{relaciones}} y {{diagramas}}.",
       "distractors": ["sentencias", "tablas", "servicios"],
+      "unorderedGroups": [[1, 2]],
       "explanation": "Estos bloques se combinan siguiendo reglas sintácticas y mecanismos comunes como especificaciones y adornos."
     },
     {

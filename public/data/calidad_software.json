@@ -16,6 +16,7 @@
       "topic": "Modelo de Calidad de McCall",
       "template": "El modelo clásico de McCall agrupa 11 factores de calidad en tres grandes ejes vinculados al ciclo de vida del software: {{operación}} del producto, {{revisión}} del producto y {{transición}} del producto.",
       "distractors": ["comercialización", "instalación", "auditoría"],
+      "unorderedGroups": [[0, 1, 2]],
       "explanation": "Operación evalúa uso diario (corrección, confiabilidad, usabilidad); Revisión la capacidad de cambio; Transición la portabilidad e interoperabilidad."
     },
     {
@@ -24,6 +25,7 @@
       "topic": "Norma ISO/IEC 25010",
       "template": "El estándar internacional {{ISO/IEC 25010}} (sucesor de ISO 9126) define ocho características de calidad del producto software, incorporando explícitamente la {{seguridad}} y la {{compatibilidad}} junto a adecuación funcional, eficiencia, usabilidad, fiabilidad, mantenibilidad y portabilidad.",
       "distractors": ["IEEE 830", "WCAG 2.1", "economía"],
+      "unorderedGroups": [[1, 2]],
       "explanation": "Además del modelo de calidad del producto, ISO 25010 define un modelo de calidad en uso (efectividad, eficiencia, satisfacción, libertad de riesgo)."
     },
     {
@@ -32,6 +34,7 @@
       "topic": "Costos de la Calidad",
       "template": "Los costos asociados a la calidad se dividen en costos de control —{{prevención}} y {{evaluación}}— y costos por fallas —{{internas}} (detectadas antes de entregar) y {{externas}} (detectadas por el usuario en producción)—.",
       "distractors": ["infraestructura", "licencias", "publicidad"],
+      "unorderedGroups": [[0, 1]],
       "explanation": "Invertir en prevención y evaluación temprana reduce drásticamente el costo exponencial de fallas externas en producción."
     },
     {

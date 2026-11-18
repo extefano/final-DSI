@@ -32,6 +32,7 @@
       "topic": "Pilares Fundamentales de Booch",
       "template": "Grady Booch identifica cuatro pilares fundamentales de la orientación a objetos: {{abstracción}}, {{encapsulamiento}}, {{modularidad}} y {{jerarquía}}.",
       "distractors": ["persistencia", "concurrencia", "compilación"],
+      "unorderedGroups": [[0, 1, 2, 3]],
       "explanation": "A los 4 pilares fundamentales se suman 3 pilares secundarios: tipado, concurrencia y persistencia."
     },
     {

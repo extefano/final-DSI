@@ -16,6 +16,7 @@
       "topic": "Ingeniería de Software (IEEE)",
       "template": "Según la IEEE, la ingeniería de software es la aplicación de un enfoque sistemático, {{disciplinado}} y {{cuantificable}} al desarrollo, operación y {{mantenimiento}} del software.",
       "distractors": ["empírico", "artesanal", "comercial"],
+      "unorderedGroups": [[0, 1]],
       "explanation": "A diferencia del desarrollo artesanal, la ingeniería aplica métodos repetibles, medibles y mantenibles en el tiempo."
     },
     {
@@ -30,7 +31,7 @@
       "id": "u1_c04",
       "type": "cloze",
       "topic": "Actividades Marco de Pressman",
-      "template": "Las cinco actividades estructurales genéricas del marco de proceso de Pressman son: {{comunicación}}, {{planeación}}, {{modelado}}, {{construcción}} y {{despliegue}}.",
+      "template": "Las cinco actividades estructurales genéricas (en orden secuencial) del marco de proceso de Pressman son: {{comunicación}}, {{planeación}}, {{modelado}}, {{construcción}} y {{despliegue}}.",
       "distractors": ["auditoría", "facturación", "soporte"],
       "explanation": "Estas actividades se complementan con actividades sombrilla transversales como gestión de riesgos, SQA y control de configuración."
     },
