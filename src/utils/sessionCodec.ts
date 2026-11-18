@@ -1,15 +1,22 @@
-import type { ProgressState, ThemeMode } from '../types/dsi';
+import type {
+  ActiveStudySession,
+  OralDeckMode,
+  OralRatingLevel,
+  ProgressState,
+  ThemeMode,
+} from '../types/dsi';
 
 interface CompactSessionPayload {
   v: 1;
   c: string[]; // completedIds
   r: Record<string, number>; // reviewQueue
+  or?: Record<string, OralRatingLevel>; // oralRatings
   s: number; // streak
   b: number; // bestStreak
   a: number; // totalAttempts
   ok: number; // totalCorrect
   t?: ThemeMode;
-  l?: [string, string, number, number, number]; // [view, unitId, exerciseIndex, sessionCorrect, sessionTotal]
+  l?: [string, string, number, number, number, string?, string[]?]; // [view, unitId, exerciseIndex, sessionCorrect, sessionTotal, oralMode?, oralQueueIds?]
 }
 
 const CODE_PREFIX = 'DSI-';
@@ -64,26 +71,39 @@ export async function encodeSessionCode(
   theme: ThemeMode
 ): Promise<string> {
   const loc = progress.activeSession;
-  const payload: CompactSessionPayload = {
-    v: 1,
-    c: progress.completedIds,
-    r: progress.reviewQueue,
-    s: progress.streak,
-    b: progress.bestStreak,
-    a: progress.totalAttempts,
-    ok: progress.totalCorrect,
-    t: theme,
-    ...(loc && loc.view !== 'units'
-      ? {
-          l: [
+  const hasOralRatings = Object.keys(progress.oralRatings ?? {}).length > 0;
+  const locationTuple: CompactSessionPayload['l'] =
+    loc && loc.view !== 'units'
+      ? loc.view === 'oral' && loc.oralMode
+        ? [
             loc.view,
             loc.unitId ?? '',
             loc.exerciseIndex,
             loc.sessionCorrect,
             loc.sessionTotal,
-          ],
-        }
-      : {}),
+            loc.oralMode,
+            loc.oralQueueIds ?? [],
+          ]
+        : [
+            loc.view,
+            loc.unitId ?? '',
+            loc.exerciseIndex,
+            loc.sessionCorrect,
+            loc.sessionTotal,
+          ]
+      : undefined;
+
+  const payload: CompactSessionPayload = {
+    v: 1,
+    c: progress.completedIds,
+    r: progress.reviewQueue,
+    ...(hasOralRatings ? { or: progress.oralRatings } : {}),
+    s: progress.streak,
+    b: progress.bestStreak,
+    a: progress.totalAttempts,
+    ok: progress.totalCorrect,
+    t: theme,
+    ...(locationTuple ? { l: locationTuple } : {}),
   };
 
   const json = JSON.stringify(payload);
@@ -166,15 +186,45 @@ export async function decodeSessionCode(rawInput: string): Promise<
       }
     }
 
+    const sanitizedOralRatings: Record<string, OralRatingLevel> = {};
+    if (parsed.or && typeof parsed.or === 'object') {
+      for (const [key, val] of Object.entries(parsed.or)) {
+        if (typeof key === 'string' && (val === 'low' || val === 'mid' || val === 'high')) {
+          sanitizedOralRatings[key] = val;
+        }
+      }
+    }
+
     const rawLoc = Array.isArray(parsed.l) ? parsed.l : null;
-    const activeSession =
-      rawLoc && (rawLoc[0] === 'study' || rawLoc[0] === 'review' || rawLoc[0] === 'units')
+    const rawView = rawLoc?.[0];
+    const validView: ActiveStudySession['view'] | null =
+      rawView === 'study' ||
+      rawView === 'review' ||
+      rawView === 'units' ||
+      rawView === 'oral'
+        ? rawView
+        : null;
+    const rawOralMode = rawLoc?.[5];
+    const oralMode: OralDeckMode | undefined =
+      rawOralMode === 'mixed' || rawOralMode === 'weak' || rawOralMode === 'traps'
+        ? rawOralMode
+        : undefined;
+    const oralQueueIds = Array.isArray(rawLoc?.[6])
+      ? rawLoc[6].filter((id): id is string => typeof id === 'string' && id.length > 0)
+      : undefined;
+
+    const activeSession: ActiveStudySession | undefined =
+      rawLoc && validView
         ? {
-            view: rawLoc[0] as 'units' | 'study' | 'review',
+            view: validView,
             unitId: typeof rawLoc[1] === 'string' && rawLoc[1] ? rawLoc[1] : null,
             exerciseIndex: typeof rawLoc[2] === 'number' && rawLoc[2] >= 0 ? Math.floor(rawLoc[2]) : 0,
             sessionCorrect: typeof rawLoc[3] === 'number' && rawLoc[3] >= 0 ? Math.floor(rawLoc[3]) : 0,
             sessionTotal: typeof rawLoc[4] === 'number' && rawLoc[4] >= 0 ? Math.floor(rawLoc[4]) : 0,
+            ...(validView === 'oral' && oralMode ? { oralMode } : {}),
+            ...(validView === 'oral' && oralQueueIds && oralQueueIds.length > 0
+              ? { oralQueueIds }
+              : {}),
           }
         : undefined;
 
@@ -183,6 +233,7 @@ export async function decodeSessionCode(rawInput: string): Promise<
       progress: {
         completedIds: Array.from(new Set(parsed.c.filter((id) => typeof id === 'string'))),
         reviewQueue: sanitizedReview,
+        oralRatings: sanitizedOralRatings,
         streak: typeof parsed.s === 'number' && parsed.s >= 0 ? parsed.s : 0,
         bestStreak: typeof parsed.b === 'number' && parsed.b >= 0 ? parsed.b : 0,
         totalAttempts: typeof parsed.a === 'number' && parsed.a >= 0 ? parsed.a : 0,

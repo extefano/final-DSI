@@ -94,18 +94,45 @@ export interface CatalogIndex {
 
 export type ThemeMode = 'light' | 'dark';
 
+export type OralQuestionCategory = 'integradora' | 'comparacion' | 'trampa';
+export type OralRatingLevel = 'low' | 'mid' | 'high';
+export type OralDeckMode = 'mixed' | 'weak' | 'traps';
+
+export interface OralQuestion {
+  id: string;
+  category: OralQuestionCategory;
+  units: string[];
+  topic: string;
+  question: string;
+  modelAnswer: string;
+  keyPoints: string[];
+  trapWarning: string;
+  followUpQuestion: string;
+  followUpAnswer: string;
+}
+
+export interface OralDeckData {
+  title: string;
+  subtitle: string;
+  questions: OralQuestion[];
+}
+
 export interface ActiveStudySession {
-  view: 'units' | 'study' | 'review';
+  view: 'units' | 'study' | 'review' | 'oral';
   unitId: string | null;
   exerciseIndex: number;
   sessionCorrect: number;
   sessionTotal: number;
+  oralMode?: OralDeckMode;
+  oralQueueIds?: string[];
 }
 
 export interface ProgressState {
   completedIds: string[];
   /** Map from exerciseId -> consecutive correct count in review queue (0 or 1; 2 removes it) */
   reviewQueue: Record<string, number>;
+  /** Map from oralQuestionId -> self-evaluated mastery ('low' | 'mid' | 'high') */
+  oralRatings: Record<string, OralRatingLevel>;
   streak: number;
   bestStreak: number;
   totalAttempts: number;

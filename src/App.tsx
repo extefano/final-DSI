@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AlertCircle, CheckCircle2, RefreshCw } from 'lucide-react';
 import { Navbar } from './components/Navbar';
+import { OralExamView } from './components/OralExamView';
 import { SessionModal } from './components/SessionModal';
 import { StudySessionView } from './components/StudySessionView';
 import { UnitCatalogView } from './components/UnitCatalogView';
@@ -16,6 +17,9 @@ import type {
   ActiveStudySession,
   CatalogIndex,
   Exercise,
+  OralDeckData,
+  OralDeckMode,
+  OralRatingLevel,
   ProgressState,
   ThemeMode,
   UnitData,
@@ -23,7 +27,7 @@ import type {
 import { decodeSessionCode } from './utils/sessionCodec';
 
 interface DisplayedView {
-  view: 'units' | 'study' | 'review';
+  view: 'units' | 'study' | 'review' | 'oral';
   unitId: string | null;
 }
 
@@ -36,6 +40,7 @@ export default function App() {
     progress,
     reviewIds,
     recordOutcome,
+    rateOralQuestion,
     setActiveSession,
     replaceProgress,
     resetProgress,
@@ -54,6 +59,7 @@ export default function App() {
     unitId: savedSession.unitId,
   }));
   const [syncVersion, setSyncVersion] = useState(0);
+  const [importEpoch, setImportEpoch] = useState(0);
 
   const handleApplyCloudState = useCallback(
     (cloudProgress: ProgressState, cloudTheme?: ThemeMode) => {
@@ -87,6 +93,10 @@ export default function App() {
   const [loadingCatalog, setLoadingCatalog] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [syncModalOpen, setSyncModalOpen] = useState(false);
+
+  const [oralDeck, setOralDeck] = useState<OralDeckData | null>(null);
+  const [loadingOral, setLoadingOral] = useState(false);
+  const [oralLoadError, setOralLoadError] = useState<string | null>(null);
 
   // Incoming #s=DSI-... hash prompt
   const [pendingHashSession, setPendingHashSession] = useState<{
@@ -127,9 +137,33 @@ export default function App() {
     }
   }, []);
 
+  const loadOralDeck = useCallback(async () => {
+    setLoadingOral(true);
+    setOralLoadError(null);
+    try {
+      const res = await fetch('/data/simulacro_oral.json');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = (await res.json()) as OralDeckData;
+      setOralDeck(data);
+    } catch {
+      setOralLoadError(
+        'No se pudo cargar el banco del Simulacro Final Oral. Intentá nuevamente.'
+      );
+    } finally {
+      setLoadingOral(false);
+    }
+  }, []);
+
   useEffect(() => {
     loadCatalogAndUnits();
   }, [loadCatalogAndUnits]);
+
+  // Load oral deck on demand whenever entering the oral section
+  useEffect(() => {
+    if (displayedView.view === 'oral' && !oralDeck && !loadingOral && !oralLoadError) {
+      void loadOralDeck();
+    }
+  }, [displayedView.view, oralDeck, loadingOral, oralLoadError, loadOralDeck]);
 
   // Detect Pinturillo #s=DSI-... hash on load
   useEffect(() => {
@@ -154,6 +188,7 @@ export default function App() {
       unitId: profileSession.unitId,
     });
     setSyncVersion((v) => v + 1);
+    setImportEpoch((e) => e + 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProfile.id]);
 
@@ -237,6 +272,33 @@ export default function App() {
     void pushProgressToCloud(nextProgress, theme);
   }, [setActiveSession, pushProgressToCloud, theme]);
 
+  const handleStartOralRound = useCallback(
+    (mode: OralDeckMode, queueIds: string[]) => {
+      navigateAndPersist({
+        view: 'oral',
+        unitId: null,
+        exerciseIndex: 0,
+        sessionCorrect: 0,
+        sessionTotal: 0,
+        oralMode: mode,
+        oralQueueIds: queueIds,
+      });
+    },
+    [navigateAndPersist]
+  );
+
+  const handleRateOralQuestion = useCallback(
+    (
+      questionId: string,
+      rating: OralRatingLevel,
+      nextSession: ActiveStudySession
+    ) => {
+      const nextProgress = rateOralQuestion(questionId, rating, nextSession);
+      void pushProgressToCloud(nextProgress, theme);
+    },
+    [rateOralQuestion, pushProgressToCloud, theme]
+  );
+
   const handleToggleTheme = useCallback(() => {
     const nextTheme: ThemeMode = theme === 'dark' ? 'light' : 'dark';
     toggleTheme();
@@ -252,6 +314,7 @@ export default function App() {
         unitId: nextSession.unitId,
       });
       setSyncVersion((v) => v + 1);
+      setImportEpoch((e) => e + 1);
       const nextTheme = incomingTheme ?? theme;
       if (incomingTheme) setTheme(incomingTheme);
       void pushProgressToCloud(nextProgress, nextTheme);
@@ -263,6 +326,7 @@ export default function App() {
     const nextProgress = resetProgress();
     setDisplayedView({ view: 'units', unitId: null });
     setSyncVersion((v) => v + 1);
+    setImportEpoch((e) => e + 1);
     void pushProgressToCloud(nextProgress, theme);
   }, [resetProgress, pushProgressToCloud, theme]);
 
@@ -290,12 +354,14 @@ export default function App() {
     return catalog.units.find((u) => u.unitId === displayedView.unitId) ?? null;
   }, [displayedView, catalog]);
 
-  const resolvedView: 'units' | 'study' | 'review' =
-    displayedView.view === 'study' && activeUnit
-      ? 'study'
-      : displayedView.view === 'review'
-        ? 'review'
-        : 'units';
+  const resolvedView: 'units' | 'study' | 'review' | 'oral' =
+    displayedView.view === 'oral'
+      ? 'oral'
+      : displayedView.view === 'study' && activeUnit
+        ? 'study'
+        : displayedView.view === 'review'
+          ? 'review'
+          : 'units';
 
   const initialSessionStats = useMemo(
     () => ({
@@ -314,6 +380,24 @@ export default function App() {
         activeView={resolvedView}
         onSelectUnits={() =>
           navigateAndPersist({ ...DEFAULT_ACTIVE_SESSION })
+        }
+        onSelectOral={() =>
+          navigateAndPersist({
+            view: 'oral',
+            unitId: null,
+            exerciseIndex:
+              savedSession.view === 'oral' ? savedSession.exerciseIndex : 0,
+            sessionCorrect:
+              savedSession.view === 'oral' ? savedSession.sessionCorrect : 0,
+            sessionTotal:
+              savedSession.view === 'oral' ? savedSession.sessionTotal : 0,
+            ...(savedSession.view === 'oral' && savedSession.oralMode
+              ? { oralMode: savedSession.oralMode }
+              : {}),
+            ...(savedSession.view === 'oral' && savedSession.oralQueueIds
+              ? { oralQueueIds: savedSession.oralQueueIds }
+              : {}),
+          })
         }
         onStartReview={() =>
           navigateAndPersist({
@@ -365,7 +449,29 @@ export default function App() {
         </div>
       )}
 
-      {loadingCatalog ? (
+      {resolvedView === 'oral' ? (
+        <OralExamView
+          deck={oralDeck}
+          loading={loadingOral}
+          error={oralLoadError}
+          onRetryLoad={() => void loadOralDeck()}
+          progress={progress}
+          savedSession={savedSession}
+          syncVersion={syncVersion}
+          onStartRound={handleStartOralRound}
+          onRateQuestion={handleRateOralQuestion}
+          onExitToLobby={() =>
+            navigateAndPersist({
+              view: 'oral',
+              unitId: null,
+              exerciseIndex: 0,
+              sessionCorrect: 0,
+              sessionTotal: 0,
+            })
+          }
+          onExitToUnits={() => navigateAndPersist({ ...DEFAULT_ACTIVE_SESSION })}
+        />
+      ) : loadingCatalog ? (
         <main className="mx-auto max-w-6xl px-4 sm:px-6 py-12">
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, idx) => (
@@ -428,7 +534,7 @@ export default function App() {
         />
       ) : resolvedView === 'study' && activeUnit ? (
         <StudySessionView
-          key={`unit_${activeUnit.unitId}`}
+          key={`unit_${activeUnit.unitId}_${activeProfile.id}_${importEpoch}`}
           title={activeUnit.title}
           isReviewMode={false}
           exercises={unitsCache[activeUnit.unitId]?.exercises ?? []}
@@ -453,7 +559,7 @@ export default function App() {
         />
       ) : (
         <StudySessionView
-          key="review_session"
+          key={`review_session_${activeProfile.id}_${importEpoch}`}
           title="Repaso de Errores (2 aciertos seguidos)"
           isReviewMode={true}
           exercises={reviewExercises}

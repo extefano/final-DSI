@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Eye, EyeOff, Shuffle } from 'lucide-react';
+import { Check, Eye, EyeOff, Shuffle, X } from 'lucide-react';
 import type { PuzzleGridExercise } from '../types/dsi';
 import { getGridDiagramDataUri } from '../utils/diagramAssets';
 import { shuffleArray } from '../utils/textNormalize';
@@ -48,7 +48,7 @@ export function PuzzleGridEngine({
   const [draggedPos, setDraggedPos] = useState<number | null>(null);
   const [showGuide, setShowGuide] = useState(false);
 
-  // Attempt loading external image if specified; silently fall back to crisp SVG diagram
+  // Attempt loading external apunte image if specified; silently fall back to SVG diagram
   useEffect(() => {
     let active = true;
     setResolvedSrc(fallbackUri);
@@ -82,7 +82,7 @@ export function PuzzleGridEngine({
   useEffect(() => {
     if (submitSignal > 0 && !checked) {
       const isSolved = tilesOrder.every((tileIdx, posIdx) => tileIdx === posIdx);
-      const summary = `Orden correcto: cuadrantes 1 a ${totalTiles} reconstruidos en grilla ${exercise.cols}×${exercise.rows}.`;
+      const summary = `Diagrama reconstruido correctamente en grilla ${exercise.cols}×${exercise.rows}.`;
       onEvaluate(isSolved, summary);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -114,6 +114,10 @@ export function PuzzleGridEngine({
     setTilesOrder(createScrambledIndices(totalTiles));
     setSelectedPos(null);
   };
+
+  // Preserve exact 3:2 SVG proportions across any (cols x rows) grid layout
+  const tileAspectRatio = `${3 * exercise.rows} / ${2 * exercise.cols}`;
+  const isVerticalStack = exercise.cols === 1;
 
   return (
     <div className="space-y-5">
@@ -154,14 +158,16 @@ export function PuzzleGridEngine({
             src={resolvedSrc}
             alt={exercise.topic}
             referrerPolicy="no-referrer"
-            className="mx-auto max-h-52 w-auto rounded-xl border border-slate-200 dark:border-slate-700 object-contain"
+            className="mx-auto max-h-56 w-auto rounded-xl border border-slate-200 dark:border-slate-700 object-contain"
           />
         </div>
       )}
 
       {/* Dynamic CSS sliced puzzle board */}
       <div
-        className="mx-auto w-full max-w-2xl rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 p-2 sm:p-3"
+        className={`mx-auto w-full rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 p-2 sm:p-3 ${
+          isVerticalStack ? 'max-w-xl' : 'max-w-2xl'
+        }`}
       >
         <div
           className="grid gap-1.5 sm:gap-2"
@@ -199,9 +205,9 @@ export function PuzzleGridEngine({
                   }
                 }}
                 onClick={() => handleTileTap(posIdx)}
-                aria-label={`Celda ${posIdx + 1}, pieza ${tileIdx + 1}`}
+                aria-label={`Celda ${posIdx + 1}`}
                 style={{
-                  aspectRatio: '3 / 2',
+                  aspectRatio: tileAspectRatio,
                   backgroundImage: `url("${resolvedSrc}")`,
                   backgroundSize: `${exercise.cols * 100}% ${exercise.rows * 100}%`,
                   backgroundPosition: `${bgPosX}% ${bgPosY}%`,
@@ -213,23 +219,25 @@ export function PuzzleGridEngine({
                       ? 'border-emerald-500 ring-2 ring-emerald-500/30'
                       : 'border-rose-500 ring-2 ring-rose-500/30'
                     : isSelected
-                      ? 'scale-[0.97] border-blue-600 dark:border-blue-400 ring-4 ring-blue-500/30'
+                      ? 'scale-[0.98] border-blue-600 dark:border-blue-400 ring-4 ring-blue-500/35'
                       : 'border-slate-300 dark:border-slate-600 hover:border-blue-400 cursor-pointer'
                 }`}
               >
-                <span
-                  className={`absolute left-1.5 top-1.5 inline-flex h-6 min-w-[24px] items-center justify-center rounded-md px-1.5 font-mono text-xs font-bold tabular-nums shadow-sm ${
-                    checked
-                      ? isCorrectPos
+                {checked && (
+                  <span
+                    className={`absolute right-1.5 top-1.5 inline-flex h-6 w-6 items-center justify-center rounded-md shadow-sm ${
+                      isCorrectPos
                         ? 'bg-emerald-600 text-white'
                         : 'bg-rose-600 text-white'
-                      : isSelected
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-slate-900/75 text-white'
-                  }`}
-                >
-                  {tileIdx + 1}
-                </span>
+                    }`}
+                  >
+                    {isCorrectPos ? (
+                      <Check className="h-3.5 w-3.5" />
+                    ) : (
+                      <X className="h-3.5 w-3.5" />
+                    )}
+                  </span>
+                )}
               </button>
             );
           })}

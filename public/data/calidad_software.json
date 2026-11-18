@@ -59,10 +59,10 @@
       "topic": "Características de ISO/IEC 25010",
       "image": "",
       "diagramKind": "iso25010_quality",
-      "cols": 3,
+      "cols": 2,
       "rows": 2,
-      "caption": "Reconstruí el tablero de las 8 características de calidad del producto ISO/IEC 25010 (grilla 3×2).",
-      "explanation": "ISO 25010 organiza sistemáticamente los atributos de calidad internos y externos del software."
+      "caption": "Reconstruí el árbol de las 8 características de calidad del producto ISO/IEC 25010 (grilla 2×2).",
+      "explanation": "ISO 25010 organiza sistemáticamente los 8 atributos de calidad internos y externos del software."
     },
     {
       "id": "cal_d01",

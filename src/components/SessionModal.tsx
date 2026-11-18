@@ -184,6 +184,10 @@ export function SessionModal({
           {
             completedIds: candidate.completedIds,
             reviewQueue: candidate.reviewQueue ?? {},
+            oralRatings:
+              candidate.oralRatings && typeof candidate.oralRatings === 'object'
+                ? candidate.oralRatings
+                : {},
             streak: typeof candidate.streak === 'number' ? candidate.streak : 0,
             bestStreak: typeof candidate.bestStreak === 'number' ? candidate.bestStreak : 0,
             totalAttempts:

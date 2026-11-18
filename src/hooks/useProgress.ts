@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ActiveStudySession, ProgressState, StudyProfile } from '../types/dsi';
+import type {
+  ActiveStudySession,
+  OralDeckMode,
+  OralRatingLevel,
+  ProgressState,
+  StudyProfile,
+} from '../types/dsi';
 
 const LEGACY_PROGRESS_KEY = 'estudio_dsi_progress_v1';
 const PROFILES_STORAGE_KEY = 'estudio_dsi_profiles_v1';
@@ -12,13 +18,31 @@ export const DEFAULT_ACTIVE_SESSION: ActiveStudySession = {
   sessionTotal: 0,
 };
 
+export function sanitizeOralRatings(raw: unknown): Record<string, OralRatingLevel> {
+  if (!raw || typeof raw !== 'object') return {};
+  const result: Record<string, OralRatingLevel> = {};
+  let count = 0;
+  for (const [key, val] of Object.entries(raw as Record<string, unknown>)) {
+    if (count >= 200) break;
+    if (
+      typeof key === 'string' &&
+      key.length > 0 &&
+      (val === 'low' || val === 'mid' || val === 'high')
+    ) {
+      result[key.slice(0, 64)] = val;
+      count += 1;
+    }
+  }
+  return result;
+}
+
 export function sanitizeActiveSession(raw: unknown): ActiveStudySession {
   if (!raw || typeof raw !== 'object') {
     return { ...DEFAULT_ACTIVE_SESSION };
   }
   const s = raw as Partial<ActiveStudySession>;
   const rawView =
-    s.view === 'study' || s.view === 'review' || s.view === 'units'
+    s.view === 'study' || s.view === 'review' || s.view === 'units' || s.view === 'oral'
       ? s.view
       : 'units';
   const rawUnitId =
@@ -41,6 +65,29 @@ export function sanitizeActiveSession(raw: unknown): ActiveStudySession {
       ? Math.min(Math.max(0, Math.floor(s.sessionCorrect)), sessionTotal)
       : 0;
 
+  if (view === 'oral') {
+    const oralMode: OralDeckMode | undefined =
+      s.oralMode === 'mixed' || s.oralMode === 'weak' || s.oralMode === 'traps'
+        ? s.oralMode
+        : undefined;
+    const oralQueueIds = Array.isArray(s.oralQueueIds)
+      ? s.oralQueueIds
+          .filter((id): id is string => typeof id === 'string' && id.length > 0)
+          .map((id) => id.slice(0, 64))
+          .slice(0, 100)
+      : undefined;
+
+    return {
+      view,
+      unitId: null,
+      exerciseIndex,
+      sessionCorrect,
+      sessionTotal,
+      ...(oralMode ? { oralMode } : {}),
+      ...(oralQueueIds && oralQueueIds.length > 0 ? { oralQueueIds } : {}),
+    };
+  }
+
   return {
     view,
     unitId,
@@ -53,6 +100,7 @@ export function sanitizeActiveSession(raw: unknown): ActiveStudySession {
 const createEmptyProgress = (): ProgressState => ({
   completedIds: [],
   reviewQueue: {},
+  oralRatings: {},
   streak: 0,
   bestStreak: 0,
   totalAttempts: 0,
@@ -75,6 +123,7 @@ function sanitizeProgress(raw: unknown): ProgressState {
       parsed.reviewQueue && typeof parsed.reviewQueue === 'object'
         ? parsed.reviewQueue
         : {},
+    oralRatings: sanitizeOralRatings(parsed.oralRatings),
     streak: typeof parsed.streak === 'number' ? parsed.streak : 0,
     bestStreak: typeof parsed.bestStreak === 'number' ? parsed.bestStreak : 0,
     totalAttempts: typeof parsed.totalAttempts === 'number' ? parsed.totalAttempts : 0,
@@ -207,6 +256,7 @@ export function useProgress() {
         return {
           completedIds: Array.from(nextCompleted),
           reviewQueue: nextReview,
+          oralRatings: prev.oralRatings ?? {},
           streak: nextStreak,
           bestStreak: nextBestStreak,
           totalAttempts: prev.totalAttempts + 1,
@@ -217,6 +267,27 @@ export function useProgress() {
           lastUpdated: Date.now(),
         };
       });
+    },
+    [updateActiveProgress]
+  );
+
+  const rateOralQuestion = useCallback(
+    (
+      questionId: string,
+      rating: OralRatingLevel,
+      nextSession?: ActiveStudySession
+    ): ProgressState => {
+      return updateActiveProgress((prev) => ({
+        ...prev,
+        oralRatings: {
+          ...prev.oralRatings,
+          [questionId.slice(0, 64)]: rating,
+        },
+        activeSession: nextSession
+          ? sanitizeActiveSession(nextSession)
+          : sanitizeActiveSession(prev.activeSession),
+        lastUpdated: Date.now(),
+      }));
     },
     [updateActiveProgress]
   );
@@ -237,6 +308,7 @@ export function useProgress() {
     (incoming: ProgressState): ProgressState => {
       return updateActiveProgress(() => ({
         ...incoming,
+        oralRatings: sanitizeOralRatings(incoming.oralRatings),
         activeSession: sanitizeActiveSession(incoming.activeSession),
         lastUpdated: Date.now(),
       }));
@@ -269,6 +341,7 @@ export function useProgress() {
             progress: initialProgress
               ? {
                   ...initialProgress,
+                  oralRatings: sanitizeOralRatings(initialProgress.oralRatings),
                   activeSession: sanitizeActiveSession(initialProgress.activeSession),
                   lastUpdated: Date.now(),
                 }
@@ -313,6 +386,7 @@ export function useProgress() {
     progress,
     reviewIds,
     recordOutcome,
+    rateOralQuestion,
     setActiveSession,
     replaceProgress,
     resetProgress,

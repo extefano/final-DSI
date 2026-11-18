@@ -73,26 +73,36 @@ export function StudySessionView({
   const [sessionStats, setSessionStats] = useState(initialStats);
   const [finished, setFinished] = useState(false);
 
-  // Sync position/stats when a cloud snapshot, profile switch, or session code import arrives
+  useEffect(() => {
+    if (isReviewMode && reviewSnapshot.length === 0 && exercises.length > 0 && !finished) {
+      setReviewSnapshot(exercises);
+    }
+  }, [isReviewMode, reviewSnapshot.length, exercises, finished]);
+
+  // Sync position/stats when a genuine remote cloud snapshot arrives while not reviewing feedback
   useEffect(() => {
     if (syncVersion === 0) return;
+    if (checked) {
+      setSessionStats(initialStats);
+      return;
+    }
+
     const list = isReviewMode ? exercises : activeExercises;
+    const nextSafe =
+      list.length > 0 ? Math.min(Math.max(0, initialIndex), list.length - 1) : 0;
+
     if (isReviewMode) {
       setReviewSnapshot(exercises);
     }
-    const nextSafe =
-      list.length > 0 ? Math.min(Math.max(0, initialIndex), list.length - 1) : 0;
     setSessionStats(initialStats);
-    setCurrentIndex((prev) => {
-      if (prev !== nextSafe) {
-        setChecked(false);
-        setFeedback(null);
-        setCanSubmit(false);
-        setSubmitSignal(0);
-        setFinished(false);
-      }
-      return nextSafe;
-    });
+    if (currentIndex !== nextSafe) {
+      setCurrentIndex(nextSafe);
+      setChecked(false);
+      setFeedback(null);
+      setCanSubmit(false);
+      setSubmitSignal(0);
+      setFinished(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [syncVersion]);
 

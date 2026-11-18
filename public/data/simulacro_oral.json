@@ -1,0 +1,466 @@
+{
+  "title": "Simulacro Final Oral — Mesa Integradora",
+  "subtitle": "Entrenamiento guiado de exposición oral con rúbrica de puntos clave, cruces entre unidades, trampas típicas de tribunal y repreguntas encadenadas.",
+  "questions": [
+    {
+      "id": "oral_i01",
+      "category": "integradora",
+      "units": ["U1", "U5"],
+      "topic": "Modelos de Ciclo de Vida y Gestión del Riesgo",
+      "question": "¿En qué se diferencian el ciclo de vida en Cascada, el modelo en Espiral de Boehm y RUP/PUDS, y con qué criterio elegirías cada uno para un proyecto real?",
+      "modelAnswer": "Cascada es secuencial y rígido, útil solo cuando los requisitos son estables y muy conocidos desde el inicio. El Espiral de Boehm introduce un enfoque iterativo guiado explícitamente por el análisis de riesgos en cada vuelta (fijar objetivos, analizar riesgos, desarrollar/probar y planificar). RUP (PUDS) combina el desarrollo iterativo e incremental dirigido por casos de uso y centrado en la arquitectura a través de cuatro fases con hitos concretos.",
+      "keyPoints": [
+        "Cascada: fases secuenciales sin retorno sencillo; exige requisitos estables desde el arranque",
+        "Espiral de Boehm: 4 cuadrantes por iteración con eje central en el análisis de riesgos y prototipos",
+        "RUP/PUDS: dirigido por casos de uso, centrado en la arquitectura, iterativo e incremental",
+        "Criterio de elección según incertidumbre de requisitos, criticidad de riesgos y necesidad de entregas tempranas"
+      ],
+      "trapWarning": "No describas el Espiral de Boehm solo como 'cascada en forma de caracol'. Su aporte distintivo es que cada ciclo exige analizar riesgos y evaluar alternativas antes de comprometer la ingeniería.",
+      "followUpQuestion": "¿Qué diferencia a los hitos de RUP (Inicio, Elaboración, Construcción, Transición) de una iteración de Scrum?",
+      "followUpAnswer": "En RUP las fases marcan grandes objetivos de negocio y arquitectura (ej. LCO y LCA en Elaboración) y pueden contener múltiples iteraciones internas; en Scrum cada Sprint entrega un incremento potencialmente utilizable de producto con foco empírico y adaptación continua."
+    },
+    {
+      "id": "oral_i02",
+      "category": "integradora",
+      "units": ["U1", "U5"],
+      "topic": "Capas de Pressman vs. Agilidad",
+      "question": "¿Cómo se relacionan las capas de la Ingeniería de Software de Pressman con el Manifiesto Ágil y prácticas como Scrum o XP?",
+      "modelAnswer": "Pressman estructura la disciplina en cuatro capas: enfoque en calidad (base), proceso, métodos y herramientas. La agilidad no elimina el proceso ni los métodos, sino que reemplaza el proceso predictivo pesado por marcos empíricos y adaptativos (Scrum para gestión, XP para ingeniería) manteniendo prácticas técnicas rigurosas orientadas a la calidad.",
+      "keyPoints": [
+        "Nombrar las 4 capas de Pressman: enfoque en calidad, proceso, métodos y herramientas",
+        "Aclarar que ágil no significa 'sin proceso' sino proceso liviano y adaptativo",
+        "Conectar Scrum (gestión e inspección) con XP (prácticas técnicas: TDD, refactoring, integración continua)",
+        "Vincular la base de calidad de Pressman con el criterio de 'Hecho' (Definition of Done) ágil"
+      ],
+      "trapWarning": "Error frecuente: responder que los métodos ágiles rechazan la capa de proceso o los métodos de ingeniería. El Manifiesto Ágil valora más las personas y el software funcionando que seguir rígidamente un plan.",
+      "followUpQuestion": "Si usás Scrum, ¿con qué prácticas de XP lo complementarías para no acumular deuda técnica?",
+      "followUpAnswer": "Con Desarrollo Guiado por Pruebas (TDD), refactorización continua, programación en parejas, propiedad colectiva del código e integración continua."
+    },
+    {
+      "id": "oral_i03",
+      "category": "integradora",
+      "units": ["U2", "U4"],
+      "topic": "Usabilidad, UX y Arquitectura de Presentación",
+      "question": "¿Cómo impactan las heurísticas de Nielsen, el Panal UX de Morville y WCAG en el diseño de la interfaz y en las decisiones arquitectónicas?",
+      "modelAnswer": "Las decisiones de usabilidad y UX condicionan tanto la interfaz como la arquitectura: la visibilidad del estado del sistema y los tiempos de respuesta exigen endpoints rápidos o estados optimistas; la accesibilidad WCAG (perceptible, operable, comprensible, robusto) y la compatibilidad multidispositivo orientan la separación entre UI y lógica de negocio y la definición de APIs desacopladas.",
+      "keyPoints": [
+        "Heurísticas de Nielsen relevantes: visibilidad del estado, prevención de errores, consistencia y reconocimiento sobre recuerdo",
+        "Panal de Morville: útil, usable, deseable, encontrable, accesible, creíble y valioso",
+        "Principios WCAG (POUR): Perceptible, Operable, Comprensible y Robusto",
+        "Impacto arquitectónico: separación presentación/negocio, latencia percibida y soporte multiplataforma"
+      ],
+      "trapWarning": "No reduzcas la Unidad 2 a 'elegir lindos colores o botones'. El tribunal espera que conectes usabilidad, accesibilidad y diseño centrado en el usuario (UCD) con decisiones técnicas del sistema.",
+      "followUpQuestion": "¿Qué diferencia hay entre la regla de 'Prevención de errores' y 'Ayudar a reconocer y recuperarse de errores' según Nielsen?",
+      "followUpAnswer": "Prevenir evita que el usuario llegue al estado inválido (confirmaciones, restricciones, validaciones tempranas); recuperarse implica comunicar con lenguaje claro qué falló y cómo solucionarlo sin códigos técnicos crípticos."
+    },
+    {
+      "id": "oral_i04",
+      "category": "integradora",
+      "units": ["U3.1", "U3.2"],
+      "topic": "De Casos de Uso y BCE a Secuencia y Clases",
+      "question": "Explicá el flujo de diseño desde un Caso de Uso hasta el Diagrama de Clases usando estereotipos BCE y Diagramas de Secuencia.",
+      "modelAnswer": "A partir de la especificación de un Caso de Uso se identifican objetos participantes con tarjetas CRC o estereotipos BCE: Boundary (interacción con actores), Control (coordinación del flujo del caso de uso) y Entity (datos y reglas persistentes). Luego el Diagrama de Secuencia distribuye responsabilidades mediante mensajes en orden temporal, lo cual define exactamente qué métodos y asociaciones deben figurar en el Diagrama de Clases.",
+      "keyPoints": [
+        "Tarjetas CRC (Clase - Responsabilidad - Colaboradores) como puente hacia el diseño OO",
+        "Rol de cada estereotipo BCE: Boundary (borde/UI), Control (coordinación), Entity (modelo de dominio)",
+        "Diagrama de Secuencia: muestra líneas de vida y mensajes ordenados en el tiempo (vista dinámica)",
+        "Coherencia obligatoria: todo mensaje recibido por una instancia en Secuencia debe existir como operación en su Clase"
+      ],
+      "trapWarning": "Trampa habitual: colocar lógica de negocio compleja dentro de los objetos Boundary o convertir al Control en una clase 'Dios' que hace todo el trabajo de las Entity.",
+      "followUpQuestion": "¿Qué elemento del Diagrama de Secuencia indica que el emisor espera la respuesta antes de continuar?",
+      "followUpAnswer": "El mensaje síncrono, representado con línea continua y punta de flecha rellena (triángulo sólido), a diferencia del mensaje asíncrono que usa punta abierta."
+    },
+    {
+      "id": "oral_i05",
+      "category": "integradora",
+      "units": ["U3.1", "U3.3"],
+      "topic": "Pilares POO como Base de OCP y DIP",
+      "question": "¿Por qué el encapsulamiento y el polimorfismo de la POO son indispensables para cumplir Open/Closed (OCP) e Inversión de Dependencias (DIP)?",
+      "modelAnswer": "Sin encapsulamiento, los clientes acceden a detalles internos y cualquier cambio interno rompe al consumidor. Sin polimorfismo ni abstracciones (interfaces o clases abstractas), extender comportamiento exigiría editar condicionales switch/if en código existente, violando OCP. DIP exige depender de abstracciones, lo que solo funciona en tiempo de ejecución gracias al enlace dinámico polimórfico.",
+      "keyPoints": [
+        "Encapsulamiento oculta representación interna y expone un contrato estable",
+        "OCP: abierto a la extensión (nuevos subtipos), cerrado a la modificación del cliente existente",
+        "DIP: módulos de alto y bajo nivel dependen de abstracciones, no de implementaciones concretas",
+        "Polimorfismo permite sustituir implementaciones en tiempo de ejecución sin cambiar al invocador"
+      ],
+      "trapWarning": "No definas OCP como 'nunca más tocar un archivo de código'. Significa poder agregar nuevas variantes de comportamiento incorporando extensiones sin reescribir la lógica central estable.",
+      "followUpQuestion": "¿Cómo se relaciona este esquema con el patrón GRASP de Indirección o Variaciones Protegidas?",
+      "followUpAnswer": "Variaciones Protegidas propone envolver puntos de inestabilidad tras una interfaz estable; Indirección introduce un objeto intermediario para desacoplar componentes y evitar dependencia directa."
+    },
+    {
+      "id": "oral_i06",
+      "category": "integradora",
+      "units": ["U3.3", "U6"],
+      "topic": "Sinergia entre SOLID/GRASP y Patrones GoF",
+      "question": "Elegí dos patrones GoF concretos y explicá qué principios SOLID o patrones GRASP materializan en la práctica.",
+      "modelAnswer": "El patrón Strategy materializa Open/Closed, Responsabilidad Única y Variaciones Protegidas al encapsular algoritmos intercambiables detrás de una interfaz común. Decorator cumple OCP y SRP añadiendo responsabilidades dinámicamente mediante composición en lugar de herencia rígida. Adapter aplica Indirección y DIP para adaptar interfaces incompatibles sin modificar el cliente ni el legado.",
+      "keyPoints": [
+        "Categorías GoF de Gamma et al.: Creacionales, Estructurales y de Comportamiento",
+        "Strategy -> OCP + SRP + Polimorfismo + Variaciones Protegidas",
+        "Decorator -> Composición sobre herencia + extensión dinámica de responsabilidades (OCP)",
+        "Factory Method / Abstract Factory -> desacoplamiento de instanciación (Creador / DIP)"
+      ],
+      "trapWarning": "Evitá enumerar nombres de los 23 patrones de memoria sin explicar el problema de acoplamiento o rigidez que resuelven.",
+      "followUpQuestion": "¿Por qué Abstract Factory suele asociarse con el principio de Inversión de Dependencias?",
+      "followUpAnswer": "Porque el cliente trabaja únicamente con interfaces de fábrica y productos abstractos sin conocer ni instanciar directamente las familias de clases concretas."
+    },
+    {
+      "id": "oral_i07",
+      "category": "integradora",
+      "units": ["U4", "Calidad"],
+      "topic": "Escenarios de Calidad, Tácticas y Normas",
+      "question": "¿Cómo se conecta un atributo de calidad (ISO/IEC 25010 o McCall) con un escenario de calidad de Bass y una táctica arquitectónica?",
+      "modelAnswer": "Los modelos de calidad como ISO/IEC 25010 definen atributos abstractos (disponibilidad, rendimiento, mantenibilidad). Para hacerlos evaluables en diseño, Len Bass propone escribir escenarios de calidad concretos de seis partes (estímulo, fuente, entorno, artefacto, respuesta y medida de respuesta). Para satisfacer la medida exigida se aplican tácticas arquitectónicas específicas (ej. replicación o caché) que luego influyen en el estilo arquitectónico elegido.",
+      "keyPoints": [
+        "ISO/IEC 25010 organiza calidad del producto en 8 características (adecuación funcional, desempeño, usabilidad, fiabilidad, seguridad, mantenibilidad, portabilidad, compatibilidad)",
+        "Escenario de calidad de Bass: estímulo, fuente, artefacto, entorno, respuesta y medida verificable",
+        "Táctica: decisión puntual de diseño que controla la respuesta ante un atributo de calidad (ej. ping/echo, throttling, ocultar información)",
+        "Trade-offs: mejorar seguridad o consistencia suele impactar latencia o complejidad"
+      ],
+      "trapWarning": "Decir simplemente 'el sistema debe ser rápido y seguro' no es un requisito arquitectónico válido. El tribunal busca que lo bajes a medida cuantificable mediante un escenario.",
+      "followUpQuestion": "Mencioná dos tácticas concretas para Disponibilidad y dos para Rendimiento.",
+      "followUpAnswer": "Disponibilidad: detección de fallas (ping/echo, heartbeat) y recuperación (redundancia activa/pasiva, rollback). Rendimiento: gestión de recursos (concurrencia, caché/réplica de datos) y control de demanda (cola de eventos, límite de tasa)."
+    },
+    {
+      "id": "oral_i08",
+      "category": "integradora",
+      "units": ["U3.2", "U4"],
+      "topic": "Modelo 4+1 de Kruchten y Vistas UML",
+      "question": "¿Cómo organiza el modelo 4+1 de Philippe Kruchten la documentación de una arquitectura y qué diagramas UML corresponden a cada vista?",
+      "modelAnswer": "Kruchten propone cuatro vistas complementarias más una quinta vista unificadora basada en escenarios/casos de uso (+1): la Vista Lógica (diagramas de clases y estados, orientada a funcionalidad para usuarios finales), la Vista de Procesos (secuencia y actividad con concurrencia/hilos), la Vista de Desarrollo o Implementación (componentes y paquetes para programadores) y la Vista Física (despliegue en nodos para infraestructura).",
+      "keyPoints": [
+        "Vista Lógica: funcionalidad del sistema (Diagramas de Clases, Objetos, Estados)",
+        "Vista de Procesos: concurrencia, sincronización y rendimiento (Actividad, Secuencia)",
+        "Vista de Desarrollo: organización estática del código y módulos (Componentes, Paquetes)",
+        "Vista Física: mapeo de software sobre hardware y red (Diagrama de Despliegue)",
+        "El '+1' (Escenarios / Casos de Uso): valida y conecta las otras cuatro vistas"
+      ],
+      "trapWarning": "No confundas las 4 vistas de Kruchten con los 3 tipos de vista propuestos por Bass (Módulos, Componentes y Conectores, Asignación): son modelos complementarios de distintos autores del apunte.",
+      "followUpQuestion": "¿En cuál de las vistas de Bass ubicarías el Diagrama de Despliegue de UML?",
+      "followUpAnswer": "En las vistas de Asignación (Allocation), porque mapean elementos de software (módulos o componentes) sobre elementos del entorno físico, archivos o equipos."
+    },
+    {
+      "id": "oral_i09",
+      "category": "integradora",
+      "units": ["U5", "Calidad"],
+      "topic": "SQA, SQC y Revisiones en Ágil vs. RUP",
+      "question": "¿Cómo se gestionan SQA (Aseguramiento) y SQC (Control de Calidad) dentro de Scrum/XP respecto de un proceso tradicional o RUP?",
+      "modelAnswer": "En procesos tradicionales o RUP, SQA audita hitos formales, estándares y revisiones técnicas formales (RTF) planificadas por fase, mientras SQC ejecuta pruebas al cierre de etapas. En Scrum/XP el enfoque se vuelve continuo: SQC ocurre en cada historia mediante pruebas automatizadas, TDD e integración continua, y SQA se refleja en el Definition of Done, revisión de pares y las Retrospectivas de mejora de proceso.",
+      "keyPoints": [
+        "Distinción base: SQA es preventivo y orientado al proceso; SQC es detectivo y orientado al producto",
+        "Revisiones Técnicas Formales (RTF): inspeccionan artefactos tempranamente antes de que el defecto sea costoso",
+        "En ágil, las pruebas continuas (unitarias, aceptación, CI) integran SQC dentro de cada iteración",
+        "Definition of Done y Retrospectivas sostienen el cumplimiento de estándares de proceso"
+      ],
+      "trapWarning": "Es falso pensar que en Scrum 'la calidad se controla solo probando en la Sprint Review'. El control de calidad es continuo durante todo el Sprint para mantener el incremento potencialmente entregable.",
+      "followUpQuestion": "¿Por qué corregir un defecto encontrado en requisitos o diseño cuesta mucho menos que en producción?",
+      "followUpAnswer": "Por el efecto multiplicador de retrabajo (regla exponencial del costo de fallas): un error temprano propaga cambios en diseño, código, pruebas, despliegue y soporte post-entrega."
+    },
+    {
+      "id": "oral_i10",
+      "category": "integradora",
+      "units": ["U4", "U6"],
+      "topic": "Estilos Arquitectónicos vs. Patrones de Diseño",
+      "question": "¿Qué diferencia de nivel existe entre un Estilo Arquitectónico (Capas, Clean Architecture, Pipe & Filter) y un Patrón de Diseño GoF?",
+      "modelAnswer": "Un estilo arquitectónico define la macroestructura global del sistema completo: qué tipos de componentes y conectores existen, sus restricciones topológicas y reglas de dependencia (como la Regla de Dependencia hacia el dominio en Clean Architecture). Un patrón de diseño GoF opera a escala de clases y objetos dentro de un módulo para resolver problemas locales de instanciación, estructura o comportamiento.",
+      "keyPoints": [
+        "Escala: Estilo/Patrón Arquitectónico gobierna el sistema completo; GoF resuelve colaboración entre clases",
+        "Estilo en Capas vs. Clean Architecture: Clean invierte dependencias para que el dominio no dependa de infraestructura ni frameworks",
+        "Pipe & Filter: componentes transformadores independientes conectados por flujos de datos",
+        "Coexistencia: una arquitectura hexagonal o en capas suele usar Repository, Adapter, Strategy o Factory por dentro"
+      ],
+      "trapWarning": "No llames 'patrón arquitectónico' a Singleton ni 'patrón GoF' a MVC sin aclarar la distinción de escala (MVC es arquitectónico / compuesto).",
+      "followUpQuestion": "En Clean Architecture, ¿qué patrón GoF o principio SOLID permite que un caso de uso grabe en base de datos sin conocer el motor SQL?",
+      "followUpAnswer": "Inversión de Dependencias (DIP): el caso de uso define una interfaz puerto/repositorio en la capa interna y la infraestructura implementa un Adapter concreto en la capa externa."
+    },
+    {
+      "id": "oral_c01",
+      "category": "comparacion",
+      "units": ["U3.2"],
+      "topic": "Agregación vs. Composición en UML",
+      "question": "Compará Agregación y Composición en UML: semántica de propiedad, ciclo de vida y cómo se dibujan.",
+      "modelAnswer": "Ambas representan relaciones todo-parte sobre una asociación. La Agregación (rombo blanco/hueco del lado del todo) indica una relación débil: las partes pueden existir de forma independiente o compartirse entre varios agregados. La Composición (rombo negro/relleno del lado del todo) implica propiedad exclusiva y dependencia fuerte de ciclo de vida: al destruirse el todo, sus partes mueren con él.",
+      "keyPoints": [
+        "Ambos rombos se ubican siempre del lado del 'todo' (contenedor), nunca de la parte",
+        "Agregación = rombo hueco; partes pueden ser compartidas y sobrevivir al contenedor",
+        "Composición = rombo relleno; multiplicidad máxima 1 del lado del todo y ciclo de vida ligado",
+        "Ejemplo claro: Equipo–Jugador (agregación) vs. Pedido–ÍtemDePedido o Edificio–Habitación (composición)"
+      ],
+      "trapWarning": "Trampa gráfica muy común: dibujar el rombo en el extremo de la clase parte en vez del lado del todo, o no respetar que en Composición una parte no puede pertenecer simultáneamente a dos todos.",
+      "followUpQuestion": "Si la parte vive fuera del todo, ¿la multiplicidad del lado del todo en composición puede ser 2..*?",
+      "followUpAnswer": "No. En composición estricta una instancia de la parte pertenece como máximo a un único todo (multiplicidad 1 o 0..1 del lado del todo)."
+    },
+    {
+      "id": "oral_c02",
+      "category": "comparacion",
+      "units": ["U6"],
+      "topic": "Strategy vs. State (GoF Comportamiento)",
+      "question": "Strategy y State tienen prácticamente el mismo diagrama de clases UML. ¿Cómo los distinguís en un examen oral?",
+      "modelAnswer": "Aunque estructuralmente ambos delegan comportamiento en una jerarquía polimórfica, su intención difiere: Strategy permite al cliente elegir e intercambiar un algoritmo equivalente para resolver una tarea (ej. método de envío o cálculo de tarifa), sin que las estrategias se conozcan entre sí. State modela el ciclo de vida interno de un contexto: el comportamiento cambia según el estado actual y las transiciones suelen ser ejecutadas por el contexto o los propios estados.",
+      "keyPoints": [
+        "Misma estructura UML (Contexto delega en interfaz), distinta intención semántica",
+        "Strategy: alternativas de algoritmo configuradas desde afuera; estrategias independientes entre sí",
+        "State: comportamiento dependiente del estado interno con transiciones de estado encapsuladas",
+        "State evita grandes condicionales if/switch repetidos en múltiples métodos según el estado del objeto"
+      ],
+      "trapWarning": "Si solo decís 'Strategy cambia algoritmos y State cambia estados' queda superficial. Tenés que explicar quién elige la estrategia (cliente) vs. cómo ocurren las transiciones (encapsuladas entre estados/contexto).",
+      "followUpQuestion": "¿Qué otro patrón GoF de Comportamiento ayuda a encapsular una petición como objeto para deshacer operaciones (Undo)?",
+      "followUpAnswer": "El patrón Command, que convierte una solicitud en un objeto autónomo parametrizable, encolable y reversible."
+    },
+    {
+      "id": "oral_c03",
+      "category": "comparacion",
+      "units": ["U6"],
+      "topic": "Adapter vs. Facade vs. Proxy",
+      "question": "¿En qué se diferencian Adapter, Facade y Proxy si los tres envuelven a otro objeto o subsistema?",
+      "modelAnswer": "Adapter traduce la interfaz incompatible de una clase existente hacia la interfaz que el cliente espera. Facade provee una interfaz única y simplificada sobre un subsistema complejo compuesto por múltiples clases. Proxy implementa exactamente la misma interfaz que el objeto real para controlar el acceso a él (lazy loading, seguridad, acceso remoto o caché).",
+      "keyPoints": [
+        "Adapter: convierte una interfaz existente en otra requerida por el cliente (resuelve incompatibilidad)",
+        "Facade: unifica y simplifica múltiples llamadas de un subsistema complejo (no impide usar el subsistema directo)",
+        "Proxy: mantiene la MISMA interfaz del objeto real para interceptar o diferir el acceso",
+        "Decorator (bonus comparativo): también mantiene la interfaz pero para sumar responsabilidades apilables"
+      ],
+      "trapWarning": "Confundir Adapter con Facade es un clásico de final. Recordá: Adapter suele envolver un servicio para que encaje en una interfaz esperada; Facade crea una interfaz nueva más simple sobre un conjunto complejo.",
+      "followUpQuestion": "¿Cuál de estos cuatro patrones estructurales cambia la interfaz original del objeto envuelto?",
+      "followUpAnswer": "Adapter y Facade cambian la interfaz expuesta al cliente; Proxy y Decorator conservan la misma interfaz del componente original."
+    },
+    {
+      "id": "oral_c04",
+      "category": "comparacion",
+      "units": ["U3.3"],
+      "topic": "Cohesión vs. Acoplamiento",
+      "question": "Explicá la diferencia entre Cohesión y Acoplamiento, cuál queremos maximizar o minimizar y por qué.",
+      "modelAnswer": "La Cohesión mide qué tan estrechamente relacionadas y enfocadas están las responsabilidades internas de un único módulo o clase (buscamos ALTA cohesión, idealmente funcional). El Acoplamiento mide el grado de dependencia e interconexión entre distintos módulos (buscamos BAJO acoplamiento, preferentemente por datos/parámetros y no por contenido o datos globales compartidos).",
+      "keyPoints": [
+        "Cohesión = medida intramódulo (enfoque interno); objetivo: ALTA cohesión",
+        "Acoplamiento = medida intermódulo (dependencia externa); objetivo: BAJO acoplamiento",
+        "Escala de cohesión: de Coincidental (peor) hasta Funcional (mejor)",
+        "Escala de acoplamiento: de Datos (mejor/más débil) hasta Común/Contenido (peor/más fuerte)"
+      ],
+      "trapWarning": "Nunca digas 'queremos cero acoplamiento': un sistema sin ningún acoplamiento entre módulos no podría colaborar ni funcionar. Buscamos el mínimo acoplamiento necesario a través de abstracciones limpias.",
+      "followUpQuestion": "¿Con qué principio SOLID y patrón GRASP se alinea directamente la alta cohesión?",
+      "followUpAnswer": "Con el Principio de Responsabilidad Única (SRP) de SOLID y el patrón homónimo Alta Cohesión (High Cohesion) de GRASP."
+    },
+    {
+      "id": "oral_c05",
+      "category": "comparacion",
+      "units": ["Calidad"],
+      "topic": "SQA vs. SQC y Verificación vs. Validación",
+      "question": "¿Cuál es la diferencia entre SQA y SQC, y cómo se vincula con Verificación y Validación (V&V)?",
+      "modelAnswer": "SQA (Aseguramiento de la Calidad) es preventivo y orientado al proceso: define estándares, auditorías y revisiones para evitar que se introduzcan defectos. SQC (Control de Calidad) es detectivo y orientado al producto: inspecciona artefactos y ejecuta pruebas para hallar defectos antes de liberar. Por otro lado, Verificación pregunta '¿estamos construyendo el producto correctamente?' (contra especificaciones) y Validación pregunta '¿estamos construyendo el producto correcto?' (contra necesidades reales del usuario).",
+      "keyPoints": [
+        "SQA: enfoque en el proceso, prevención, auditorías y estándares",
+        "SQC: enfoque en el producto, detección, testing y métricas de salida",
+        "Verificación: conformidad con especificación/diseño ('building the product right')",
+        "Validación: satisfacción de la necesidad real del usuario ('building the right product')"
+      ],
+      "trapWarning": "No inviertas las frases de Boehm entre Verificación y Validación, ni digas que SQC es solo responsabilidad del área de QA mientras SQA es 'hacer tests unitarios'.",
+      "followUpQuestion": "¿Una Revisión Técnica Formal (RTF) sobre un diagrama de arquitectura pertenece a SQA/Verificación o a Validación?",
+      "followUpAnswer": "Principalmente a Verificación y control temprano dentro del marco de aseguramiento (es estática, sin ejecutar código, y contrasta el diseño contra requisitos y estándares)."
+    },
+    {
+      "id": "oral_c06",
+      "category": "comparacion",
+      "units": ["U4"],
+      "topic": "Monolito en Capas vs. SOA vs. Microservicios",
+      "question": "Compará una arquitectura Monolítica en Capas, SOA y Microservicios en términos de despliegue, datos y comunicación.",
+      "modelAnswer": "El monolito en capas se despliega como una única unidad y suele compartir una sola base de datos con llamadas en memoria. SOA organiza servicios de negocio reutilizables a nivel empresarial, frecuentemente orquestados mediante un ESB centralizado. Microservicios descompone el sistema en servicios pequeños e independientes por capacidad de negocio, cada uno con su propia base de datos ('database per service'), despliegue autónomo y comunicación liviana ('smart endpoints, dumb pipes').",
+      "keyPoints": [
+        "Monolito: despliegue único, llamadas locales rápidas, riesgo de acoplamiento si no se modulariza",
+        "SOA: integración empresarial de servicios grandes con tendencia a bus centralizado (ESB)",
+        "Microservicios: despliegue independiente, aislamiento de datos por servicio y tolerancia a fallos",
+        "Principio 'smart endpoints and dumb pipes' en microservicios vs. lógica de ruteo pesada en ESB"
+      ],
+      "trapWarning": "Si tenés microservicios distintos escribiendo directamente en las mismas tablas de una única base de datos, construiste un 'monolito distribuido', combinando lo peor de ambos mundos.",
+      "followUpQuestion": "¿Qué problema introduce tener una base de datos por microservicio al realizar operaciones entre dos servicios?",
+      "followUpAnswer": "Se pierden las transacciones ACID locales tradicionales, requiriendo consistencia eventual y patrones como Saga o eventos de dominio."
+    },
+    {
+      "id": "oral_c07",
+      "category": "comparacion",
+      "units": ["U1", "U5"],
+      "topic": "Prototipado vs. Desarrollo Iterativo e Incremental",
+      "question": "¿Cuál es la diferencia fundamental entre hacer Prototipos y trabajar de forma Iterativa e Incremental?",
+      "modelAnswer": "El prototipado construye rápidamente una versión exploratoria (desechable o evolutiva) principalmente para validar requisitos poco claros o probar viabilidad técnica/UX con el usuario. El desarrollo iterativo e incremental entrega partes reales y funcionales del producto final en ciclos repetidos: cada iteración refina y añade funcionalidad sobre arquitectura productiva hasta completar el sistema.",
+      "keyPoints": [
+        "Prototipo: herramienta de descubrimiento y reducción de ambigüedad en requisitos o interfaz",
+        "Iterativo: revisita y refina el sistema en sucesivas pasadas",
+        "Incremental: suma porciones funcionales completas de valor en cada entrega",
+        "Riesgo del prototipo evolutivo mal gestionado: convertir código rápido sin calidad en sistema de producción"
+      ],
+      "trapWarning": "No asumas que todo prototipo pasa a producción: en el prototipado desechable, su único objetivo es aprender rápido y luego reescribir con calidad ingenieril.",
+      "followUpQuestion": "¿En qué fase del Espiral de Boehm suele aparecer un prototipo?",
+      "followUpAnswer": "Durante el análisis y mitigación de riesgos (cuadrante 2), precisamente para reducir incertidumbre antes de desarrollar el producto."
+    },
+    {
+      "id": "oral_c08",
+      "category": "comparacion",
+      "units": ["U2"],
+      "topic": "Usabilidad vs. Accesibilidad vs. Experiencia de Usuario (UX)",
+      "question": "¿En qué se diferencian Usabilidad, Accesibilidad y Experiencia de Usuario (UX)? ¿Pueden existir una sin la otra?",
+      "modelAnswer": "La Usabilidad mide con qué eficacia, eficiencia y satisfacción un usuario logra objetivos concretos en un contexto de uso (ISO / Nielsen). La Accesibilidad garantiza que el sistema pueda ser percibido, operado y comprendido por personas con distintas discapacidades o tecnologías de asistencia (WCAG). La UX es el concepto más amplio: abarca todas las percepciones, emociones y valor percibido antes, durante y después de interactuar con el producto (Panal de Morville).",
+      "keyPoints": [
+        "Usabilidad: eficacia, eficiencia y satisfacción para completar tareas (5 atributos de Nielsen)",
+        "Accesibilidad: eliminación de barreras físicas, sensoriales o cognitivas (WCAG / ONTI)",
+        "UX: vivencia integral y emocional (incluye utilidad, deseabilidad, credibilidad y usabilidad)",
+        "Un producto puede ser visualmente deseable pero inaccesible, o técnicamente accesible pero poco usable"
+      ],
+      "trapWarning": "Error común: usar 'UX' y 'UI' o 'Usabilidad' como sinónimos exactos. La UI es la superficie concreta de interacción; la Usabilidad evalúa el uso; la UX engloba toda la experiencia.",
+      "followUpQuestion": "Nombrá los 5 atributos clásicos de Usabilidad según Jakob Nielsen.",
+      "followUpAnswer": "Facilidad de aprendizaje (Learnability), Eficiencia, Memorabilidad, Baja tasa de errores y Satisfacción subjetiva."
+    },
+    {
+      "id": "oral_c09",
+      "category": "comparacion",
+      "units": ["U3.1", "U3.3"],
+      "topic": "Herencia vs. Composición de Objetos",
+      "question": "¿Por qué los principios modernos de diseño recomiendan 'favorecer la composición sobre la herencia'?",
+      "modelAnswer": "La herencia genera el acoplamiento más fuerte posible entre subclase y superclase ('caja blanca'), es estática en tiempo de compilación y puede provocar explosión combinatoria de subclases o violaciones de Liskov. La composición ('caja negra') permite delegar comportamientos en objetos colaboradores a través de interfaces, cambiarlos dinámicamente en tiempo de ejecución y respetar SRP.",
+      "keyPoints": [
+        "Herencia: relación 'es-un', definida estáticamente, rompe encapsulamiento ante cambios en la clase padre",
+        "Composición/Delegación: relación 'tiene-un', depende solo de la interfaz pública del colaborador",
+        "Flexibilidad en tiempo de ejecución (base de Strategy, Decorator y State)",
+        "Reserva la herencia para verdaderas especializaciones taxonómicas que respeten LSP"
+      ],
+      "trapWarning": "Decir 'la herencia no sirve' también es incorrecto. La herencia bien usada expresa especialización estable que cumple LSP; el abuso ocurre cuando se hereda solo para reutilizar tres métodos.",
+      "followUpQuestion": "¿Qué patrón GoF ilustra perfectamente evitar una explosión de subclases mediante composición recursiva?",
+      "followUpAnswer": "El patrón Decorator, que envuelve un componente añadiendo combinaciones de comportamiento en ejecución sin multiplicar subclases."
+    },
+    {
+      "id": "oral_t01",
+      "category": "trampa",
+      "units": ["U3.1"],
+      "topic": "Polimorfismo vs. Sobrecarga de Métodos",
+      "question": "Pregunta trampa: Si en una clase escribo dos métodos llamados calcular() con distintos parámetros, ¿eso es polimorfismo puro?",
+      "modelAnswer": "Depende del rigor terminológico que espera el tribunal: la sobrecarga (overloading) suele llamarse polimorfismo estático o ad-hoc, porque el compilador decide en tiempo de compilación qué método invocar según la firma. En Diseño OO, el polimorfismo verdadero o de inclusión (subtipado) ocurre mediante sobreescritura (overriding) y despacho dinámico (late binding): una misma referencia de tipo base invoca comportamientos distintos según la instancia real en tiempo de ejecución.",
+      "keyPoints": [
+        "Distinguir Sobrecarga (misma clase, distinta firma, resolución estática en compilación)",
+        "Distinguir Sobreescritura + Polimorfismo de subtipo (distintas subclases, misma firma, enlace dinámico en ejecución)",
+        "El enlace tardío (late binding) es lo que habilita la extensibilidad sin tocar al cliente (OCP)",
+        "Aclarar explícitamente la diferencia antes de dar un ejemplo"
+      ],
+      "trapWarning": "Si contestás simplemente 'Sí, eso es polimorfismo' sin distinguir despacho estático vs. dinámico, el docente repregunta al instante y suele descontar el concepto clave de la unidad.",
+      "followUpQuestion": "¿En qué momento se resuelve el método a ejecutar en la sobreescritura polimórfica?",
+      "followUpAnswer": "En tiempo de ejecución (enlace dinámico o late binding), según la clase real del objeto receptor del mensaje."
+    },
+    {
+      "id": "oral_t02",
+      "category": "trampa",
+      "units": ["U3.3"],
+      "topic": "Mito sobre Alta Cohesión y Tamaño de Clases",
+      "question": "Pregunta trampa: ¿Tener alta cohesión significa dividir el sistema en cientos de clases diminutas de un solo método, o juntar todo lo de 'Usuarios' en un solo GestorUsuario gigante?",
+      "modelAnswer": "Ninguno de los dos extremos es alta cohesión. Un Gestor gigante sufre baja cohesión (lógica o coincidental) y viola SRP porque cambia por demasiados motivos distintos. Pulverizar en clases artificiales de una línea sin significado de dominio aumenta innecesariamente la indirección y el acoplamiento entre módulos. La cohesión funcional significa agrupar los datos y operaciones que pertenecen a una misma responsabilidad cohesiva de negocio.",
+      "keyPoints": [
+        "Rechazar la clase 'Dios' / Gestor monolítico que mezcla validación, SQL, PDF y mails",
+        "Rechazar la fragmentación excesiva sin cohesión conceptual (anti-patrón de sobre-ingeniería)",
+        "Definir SRP según 'una única razón de cambio' (eje de responsabilidad), no 'una sola línea de código'",
+        "Equilibrar cohesión funcional con bajo acoplamiento entre colaboradores"
+      ],
+      "trapWarning": "Trampa clásica de definiciones rápidas: creer que 'una única responsabilidad' significa que una clase solo puede tener un método.",
+      "followUpQuestion": "¿Cómo detectás en la práctica que una clase perdió cohesión?",
+      "followUpAnswer": "Cuando posee múltiples grupos de atributos usados por métodos disjuntos, o cuando distintas áreas del negocio (ej. impuestos, formato de reporte, persistencia) obligan a modificar la misma clase."
+    },
+    {
+      "id": "oral_t03",
+      "category": "trampa",
+      "units": ["U3.3"],
+      "topic": "Trampa del Principio de Sustitución de Liskov (LSP)",
+      "question": "Pregunta trampa: Si la clase Pinguino hereda de Ave y sobrescribe volar() lanzando una excepción porque no vuela, ¿cumple con el Principio de Sustitución de Liskov?",
+      "modelAnswer": "No, viola rotundamente LSP. Aunque biológicamente un pingüino sea un ave, en diseño de software la relación 'es-un' debe verificarse por comportamiento observable: si un cliente espera cualquier Ave y llama a volar(), recibir una excepción inesperada rompe el contrato de la superclase. Las subclases no pueden fortalecer precondiciones, debilitar postcondiciones ni romper invariantes del tipo base.",
+      "keyPoints": [
+        "Identificar inmediatamente la violación de LSP",
+        "Explicar que la herencia en OO modela sustitutividad de comportamiento, no taxonomía del mundo real",
+        "Reglas contractuales de LSP: no exigir más (precondiciones), no garantizar menos (postcondiciones), no lanzar excepciones inesperadas",
+        "Solución correcta: reestructurar jerarquía/interfaces (ej. AveVoladora o interfaz Volador separada)"
+      ],
+      "trapWarning": "Si decís 'está bien siempre que capturen el try/catch', seguís violando LSP y obligando al cliente a hacer instanceof o conocer subtipos concretos (rompiendo también OCP).",
+      "followUpQuestion": "¿Qué otro ejemplo clásico de libro ilustra la misma violación matemática en LSP?",
+      "followUpAnswer": "Heredar Cuadrado de Rectángulo cuando existen setAncho() y setAlto() independientes: modificar uno altera el otro en Cuadrado y rompe las expectativas del cliente de Rectángulo."
+    },
+    {
+      "id": "oral_t04",
+      "category": "trampa",
+      "units": ["U5"],
+      "topic": "Interpretación Errónea del Manifiesto Ágil",
+      "question": "Pregunta trampa: En metodologías ágiles como Scrum, 'software funcionando sobre documentación extensiva' implica que no hace falta documentar ni diseñar arquitectura, ¿verdad?",
+      "modelAnswer": "Falso. El Manifiesto Ágil aclara expresamente al final que aunque valora los elementos de la izquierda, también reconoce valor en los de la derecha. En proyectos ágiles sí se diseña arquitectura (emergente e iterativa, pero intencional) y sí se documenta lo que aporte valor real y sostenible al equipo (decisiones arquitectónicas, contratos de API, diagramas concisos), evitando únicamente la burocracia documental que nadie lee o queda obsoleta.",
+      "keyPoints": [
+        "Citar la cláusula de cierre del Manifiesto Ágil: ambos lados tienen valor, priorizando el izquierdo",
+        "Documentación 'just enough' (suficiente y viva) frente a documentación burocrática anticipada",
+        "Arquitectura intencional y evolutiva en ágil para evitar deuda técnica paralizante",
+        "Ejemplo concreto de documentación útil: ADRs (registros de decisión), contratos OpenAPI o diagramas C4/4+1 livianos"
+      ],
+      "trapWarning": "Responder que 'ágil significa empezar a programar rápido sin diagramas' demuestra desconocimiento del espíritu profesional de Scrum y XP.",
+      "followUpQuestion": "¿Cuáles son los 4 valores centrales del Manifiesto Ágil?",
+      "followUpAnswer": "1) Individuos e interacciones sobre procesos y herramientas; 2) Software funcionando sobre documentación extensiva; 3) Colaboración con el cliente sobre negociación contractual; 4) Respuesta ante el cambio sobre seguir un plan."
+    },
+    {
+      "id": "oral_t05",
+      "category": "trampa",
+      "units": ["Calidad"],
+      "topic": "Economía y Costos de la Calidad",
+      "question": "Pregunta trampa: Para reducir los costos de calidad de un sistema, ¿conviene eliminar revisiones tempranas y probar todo al final antes de entregar?",
+      "modelAnswer": "Al contrario: recortar prevención y evaluación temprana dispara los costos de fallas internas y externas. Según el modelo de Costos de Calidad, invertir en prevención (estándares, capacitación, diseño cuidadoso) y evaluación temprana (revisiones técnicas formales, pruebas continuas) cuesta una fracción mínima comparado con corregir defectos arquitectónicos al final o asumir fallas externas en producción.",
+      "keyPoints": [
+        "Clasificación completa de Costos de Calidad: Prevención, Evaluación, Fallas Internas y Fallas Externas",
+        "Prevención + Evaluación (costos de conformidad) reducen drásticamente los costos de no conformidad",
+        "Las fallas externas (producción, soporte, reputación, multas) son las más caras del ciclo de vida",
+        "Las revisiones técnicas formales detectan errores de diseño antes de escribir una línea de código"
+      ],
+      "trapWarning": "No confundas 'Costos de Evaluación' (revisar, testear) con 'Costos de Falla Interna' (el tiempo gastado en reescribir y corregir los errores encontrados antes de entregar).",
+      "followUpQuestion": "Clasificá estas dos actividades: a) ejecutar tests de regresión, b) reparar un bug crítico reportado por un cliente.",
+      "followUpAnswer": "a) Costo de Evaluación; b) Costo de Falla Externa."
+    },
+    {
+      "id": "oral_t06",
+      "category": "trampa",
+      "units": ["U6"],
+      "topic": "Abuso de Singleton como Variable Global",
+      "question": "Pregunta trampa: ¿Por qué muchos autores consideran al patrón Singleton casi un antipatrón cuando se lo usa indiscriminadamente?",
+      "modelAnswer": "Aunque Singleton asegura una única instancia global con un punto de acceso conocido, introduce acoplamiento global oculto (las clases no declaran sus dependencias en el constructor), viola SRP al gestionar tanto su lógica de negocio como su propio ciclo de vida/instanciación, y dificulta las pruebas unitarias al compartir estado mutable entre tests.",
+      "keyPoints": [
+        "Intención original de GoF: garantizar exactamente una instancia y un punto global de acceso",
+        "Problemas: estado global oculto, ruptura de SRP y obstáculos para testing/mocking",
+        "Alternativa preferida: inyección de dependencias con alcance singleton administrado por el contenedor",
+        "Casos donde aún tiene sentido controlado: recursos puramente sin estado mutable o configuraciones inmutables"
+      ],
+      "trapWarning": "No alcanza con recitar 'instancia privada estática + constructor privado + getInstance()'. En un final avanzado esperan que sepas sus consecuencias en testabilidad y acoplamiento.",
+      "followUpQuestion": "¿Cómo obtenés una única instancia compartida en una aplicación moderna sin caer en las desventajas de Singleton clásico?",
+      "followUpAnswer": "Mediante Inyección de Dependencias (DI): la clase recibe la abstracción por constructor y el contenedor de dependencias gestiona un único ciclo de vida compartido."
+    },
+    {
+      "id": "oral_t07",
+      "category": "trampa",
+      "units": ["U3.2"],
+      "topic": "Relaciones <<include>> vs. <<extend>> en Casos de Uso",
+      "question": "Pregunta trampa: En un Diagrama de Casos de Uso, si el caso A incluye a B (<<include>>) y C extiende a A (<<extend>>), ¿hacia dónde apuntan las flechas y cuál es obligatorio?",
+      "modelAnswer": "En <<include>>, la ejecución de B es obligatoria siempre que se ejecuta el caso base A, y la flecha punteada apunta desde A hacia el incluido B (A ---> B). En <<extend>>, C agrega comportamiento opcional o condicional en un punto de extensión de A, y la flecha punteada apunta desde la extensión C hacia el caso base A (C ---> A).",
+      "keyPoints": [
+        "<<include>>: comportamiento obligatorio y reutilizado; la flecha sale del caso base hacia el incluido",
+        "<<extend>>: comportamiento opcional/condicional; la flecha sale del caso extensor hacia el caso base",
+        "Ambas usan línea discontinua con flecha abierta de dependencia y estereotipo entre comillas angulares",
+        "El caso base en <<extend>> debe tener sentido completo sin que el caso extensor ocurra"
+      ],
+      "trapWarning": "La trampa #1 de diagrama de casos de uso es dibujar la flecha de <<extend>> saliendo desde el caso base hacia la extensión. ¡Es exactamente al revés!",
+      "followUpQuestion": "¿Un caso de uso incluido mediante <<include>> suele tener un actor principal directo ejecutándolo de forma aislada?",
+      "followUpAnswer": "Por lo general no; suele representar un subflujo común factorizado desde dos o más casos de uso base que sí son iniciados por actores."
+    },
+    {
+      "id": "oral_t08",
+      "category": "trampa",
+      "units": ["U4"],
+      "topic": "Falacias Distribuidas y Costo de Microservicios",
+      "question": "Pregunta trampa: Un cliente pide migrar una startup pequeña de 3 desarrolladores a 15 microservicios para 'tener mejor rendimiento y menor complejidad'. ¿Qué le respondés frente al tribunal?",
+      "modelAnswer": "Que esa decisión probablemente empeorará tanto el rendimiento como la productividad. Los microservicios trasladan llamadas rápidas en memoria a llamadas por red con latencia, serialización y posibles fallas parciales, además de exigir observabilidad distribuida, CI/CD complejo y consistencia eventual. Para un equipo chico con dominio aún en evolución conviene iniciar con un Monolito Modular bien estructurado y extraer servicios solo cuando haya cuellos de botella o equipos independientes claros.",
+      "keyPoints": [
+        "Llamadas remotas (latencia, red no confiable, timeouts) son órdenes de magnitud más lentas que en memoria",
+        "Complejidad operativa: trazabilidad distribuida, manejo de fallas parciales y despliegue múltiple",
+        "Ley de Conway / tamaño de equipo: microservicios optimizan autonomía de múltiples equipos, no equipos de 3 personas",
+        "Estrategia recomendada: Monolito Modular ('Monolith First') con fronteras internas limpias"
+      ],
+      "trapWarning": "Evitá responder 'siempre conviene microservicios porque es moderno'. La arquitectura se justifica por contexto, atributos de calidad y estructura organizacional.",
+      "followUpQuestion": "¿Qué táctica de resiliencia aplicarías si un microservicio llama a otro por red y este empieza a fallar en cascada?",
+      "followUpAnswer": "Aplicaría el patrón/táctica Circuit Breaker junto con timeouts acotados y fallbacks para aislar la falla y evitar agotar hilos del servicio llamador."
+    }
+  ]
+}

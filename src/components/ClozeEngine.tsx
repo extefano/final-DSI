@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Keyboard, LayoutGrid, RotateCcw } from 'lucide-react';
 import type { ClozeExercise } from '../types/dsi';
 import {
+  type ClozeEvaluation,
   evaluateClozeSlots,
   parseClozeTemplate,
   shuffleArray,
@@ -36,7 +37,11 @@ export function ClozeEngine({
 
   // Desktop users default to inline typing, with an optional toggle to use the word tile bank
   const [forceTileMode, setForceTileMode] = useState(false);
-  const useTileMode = isMobileOrTouch || forceTileMode;
+  const [lockedTileMode, setLockedTileMode] = useState<boolean | null>(null);
+  const [lockedEvaluation, setLockedEvaluation] = useState<ClozeEvaluation | null>(null);
+
+  const liveTileMode = isMobileOrTouch || forceTileMode;
+  const useTileMode = checked && lockedTileMode !== null ? lockedTileMode : liveTileMode;
 
   // Shuffled word bank for tile mode
   const initialBank = useMemo<BankTile[]>(() => {
@@ -61,7 +66,10 @@ export function ClozeEngine({
     setSlotTiles(answers.map(() => null));
     setTypedValues(answers.map(() => ''));
     setDraggedTileUid(null);
-  }, [exercise.id, answers.length]);
+    setLockedTileMode(null);
+    setLockedEvaluation(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exercise.id]);
 
   const usedTileUids = useMemo(() => {
     const set = new Set<string>();
@@ -87,18 +95,22 @@ export function ClozeEngine({
     [useTileMode, slotTiles, typedValues]
   );
 
-  const evaluation = useMemo(
+  const liveEvaluation = useMemo(
     () => evaluateClozeSlots(answers, currentUserAnswers, exercise.unorderedGroups),
     [answers, currentUserAnswers, exercise.unorderedGroups]
   );
+  const evaluation =
+    checked && lockedEvaluation !== null ? lockedEvaluation : liveEvaluation;
 
   const hasUnorderedGroups = Boolean(
     exercise.unorderedGroups && exercise.unorderedGroups.length > 0
   );
 
   const evaluateCurrent = () => {
+    setLockedTileMode(liveTileMode);
+    setLockedEvaluation(liveEvaluation);
     const summary = answers.join(' · ');
-    onEvaluate(evaluation.allCorrect, summary);
+    onEvaluate(liveEvaluation.allCorrect, summary);
   };
 
   // Trigger evaluation when parent Check button increments submitSignal

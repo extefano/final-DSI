@@ -86,7 +86,98 @@ function DiagramVisualHeader({
     );
   }
 
-  // Clean structural node index badge for architectural/pattern diagrams
+  if (template === 'boehm_quadrants') {
+    // 2x2 spiral quadrant locator (0: TL Q1, 1: TR Q2, 2: BR Q3, 3: BL Q4)
+    const activeCoords = [
+      { x: 4, y: 4 },
+      { x: 26, y: 4 },
+      { x: 26, y: 22 },
+      { x: 4, y: 22 },
+    ][slotIndex % 4];
+    return (
+      <svg viewBox="0 0 48 40" className="h-9 w-12 shrink-0 text-slate-400 dark:text-slate-600">
+        <rect x="4" y="4" width="18" height="14" rx="3" fill="none" stroke="currentColor" strokeWidth="2" />
+        <rect x="26" y="4" width="18" height="14" rx="3" fill="none" stroke="currentColor" strokeWidth="2" />
+        <rect x="26" y="22" width="18" height="14" rx="3" fill="none" stroke="currentColor" strokeWidth="2" />
+        <rect x="4" y="22" width="18" height="14" rx="3" fill="none" stroke="currentColor" strokeWidth="2" />
+        <rect
+          x={activeCoords.x}
+          y={activeCoords.y}
+          width="18"
+          height="14"
+          rx="3"
+          className="fill-blue-600 dark:fill-blue-400"
+        />
+      </svg>
+    );
+  }
+
+  if (template === 'arch_styles') {
+    const glyphs = [
+      // 0: Repositorio / Pizarrón (central DB + 3 clients)
+      <svg key="a0" viewBox="0 0 48 40" className="h-9 w-12 shrink-0">
+        <ellipse cx="24" cy="20" rx="8" ry="6" fill="currentColor" opacity="0.25" stroke="currentColor" strokeWidth="2" />
+        <circle cx="8" cy="8" r="4" fill="currentColor" />
+        <circle cx="40" cy="8" r="4" fill="currentColor" />
+        <circle cx="24" cy="34" r="4" fill="currentColor" />
+        <line x1="11" y1="10" x2="18" y2="16" stroke="currentColor" strokeWidth="2" />
+        <line x1="37" y1="10" x2="30" y2="16" stroke="currentColor" strokeWidth="2" />
+        <line x1="24" y1="30" x2="24" y2="26" stroke="currentColor" strokeWidth="2" />
+      </svg>,
+      // 1: Tuberías y Filtros (3 boxes + arrows)
+      <svg key="a1" viewBox="0 0 48 40" className="h-9 w-12 shrink-0">
+        <rect x="2" y="14" width="10" height="12" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+        <rect x="19" y="14" width="10" height="12" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+        <rect x="36" y="14" width="10" height="12" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+        <line x1="12" y1="20" x2="19" y2="20" stroke="currentColor" strokeWidth="2.5" />
+        <line x1="29" y1="20" x2="36" y2="20" stroke="currentColor" strokeWidth="2.5" />
+      </svg>,
+      // 2: P2P (symmetric mesh)
+      <svg key="a2" viewBox="0 0 48 40" className="h-9 w-12 shrink-0">
+        <line x1="10" y1="10" x2="38" y2="10" stroke="currentColor" strokeWidth="2" />
+        <line x1="10" y1="10" x2="24" y2="32" stroke="currentColor" strokeWidth="2" />
+        <line x1="38" y1="10" x2="24" y2="32" stroke="currentColor" strokeWidth="2" />
+        <circle cx="10" cy="10" r="4.5" fill="currentColor" />
+        <circle cx="38" cy="10" r="4.5" fill="currentColor" />
+        <circle cx="24" cy="32" r="4.5" fill="currentColor" />
+      </svg>,
+      // 3: Maestro-Esclavo (top coordinator -> 3 workers)
+      <svg key="a3" viewBox="0 0 48 40" className="h-9 w-12 shrink-0">
+        <rect x="17" y="4" width="14" height="9" rx="2" fill="currentColor" />
+        <line x1="24" y1="13" x2="10" y2="27" stroke="currentColor" strokeWidth="2" />
+        <line x1="24" y1="13" x2="24" y2="27" stroke="currentColor" strokeWidth="2" />
+        <line x1="24" y1="13" x2="38" y2="27" stroke="currentColor" strokeWidth="2" />
+        <rect x="5" y="27" width="10" height="8" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+        <rect x="19" y="27" width="10" height="8" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+        <rect x="33" y="27" width="10" height="8" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+      </svg>,
+      // 4: Microservicios (independent service+DB pods)
+      <svg key="a4" viewBox="0 0 48 40" className="h-9 w-12 shrink-0">
+        <rect x="4" y="6" width="16" height="12" rx="3" fill="none" stroke="currentColor" strokeWidth="2" />
+        <rect x="28" y="6" width="16" height="12" rx="3" fill="none" stroke="currentColor" strokeWidth="2" />
+        <rect x="16" y="23" width="16" height="12" rx="3" fill="none" stroke="currentColor" strokeWidth="2" />
+        <circle cx="12" cy="12" r="2.5" fill="currentColor" />
+        <circle cx="36" cy="12" r="2.5" fill="currentColor" />
+        <circle cx="24" cy="29" r="2.5" fill="currentColor" />
+      </svg>,
+    ];
+    return (
+      <div className="text-indigo-600 dark:text-indigo-400">
+        {glyphs[slotIndex % glyphs.length]}
+      </div>
+    );
+  }
+
+  if (template === 'solid_principles') {
+    const letters = ['S', 'O', 'L', 'I', 'D'];
+    return (
+      <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-950/70 font-display text-base font-extrabold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+        {letters[slotIndex % letters.length]}
+      </span>
+    );
+  }
+
+  // Clean structural node index badge for remaining architectural/pattern diagrams
   return (
     <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 font-mono text-xs font-bold tabular-nums text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
       0{slotIndex + 1}

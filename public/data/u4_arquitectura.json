@@ -72,9 +72,9 @@
       "topic": "Arquitectura en Capas",
       "image": "",
       "diagramKind": "clean_architecture",
-      "cols": 2,
-      "rows": 2,
-      "caption": "Ordená la jerarquía de niveles en una arquitectura en capas.",
+      "cols": 1,
+      "rows": 4,
+      "caption": "Ordená de arriba hacia abajo la jerarquía de niveles en una arquitectura en capas.",
       "explanation": "Presentación arriba → Lógica de Negocio → Persistencia → Infraestructura en la base."
     },
     {

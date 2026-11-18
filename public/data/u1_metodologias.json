@@ -57,9 +57,9 @@
       "topic": "Capas de la Ingeniería de Software",
       "image": "",
       "diagramKind": "pressman_layers",
-      "cols": 2,
-      "rows": 2,
-      "caption": "Reconstruí el diagrama de las 4 capas de Pressman en orden.",
+      "cols": 1,
+      "rows": 4,
+      "caption": "Ordená de arriba hacia abajo las 4 capas de Pressman.",
       "explanation": "De abajo hacia arriba: Calidad → Proceso → Métodos → Herramientas."
     },
     {

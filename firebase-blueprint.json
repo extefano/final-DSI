@@ -7,7 +7,7 @@
       "properties": {
         "view": {
           "type": "string",
-          "enum": ["units", "study", "review"],
+          "enum": ["units", "study", "review", "oral"],
           "description": "Current active screen in Estudio DSI."
         },
         "unitId": {
@@ -18,15 +18,24 @@
         },
         "exerciseIndex": {
           "type": "integer",
-          "description": "Zero-based index of the current exercise within the unit or review session."
+          "description": "Zero-based index of the current exercise or oral card within the active session."
         },
         "sessionCorrect": {
           "type": "integer",
-          "description": "Number of correct answers in the active session."
+          "description": "Number of correct or mastered items in the active session."
         },
         "sessionTotal": {
           "type": "integer",
-          "description": "Total number of evaluated answers in the active session."
+          "description": "Total number of evaluated items in the active session."
+        },
+        "oralMode": {
+          "type": "string",
+          "enum": ["mixed", "weak", "traps"],
+          "description": "Active deck mode when practicing the oral mock exam."
+        },
+        "oralQueueIds": {
+          "type": "array",
+          "description": "Ordered list of oral question identifiers in the active oral mock session."
         }
       },
       "required": [
@@ -39,7 +48,7 @@
     },
     "UserProgress": {
       "title": "UserProgress",
-      "description": "Cloud-synced study progress, error review queue, active session location, and streak metrics for a single authenticated student.",
+      "description": "Cloud-synced study progress, error review queue, oral readiness ratings, active session location, and streak metrics for a single authenticated student.",
       "type": "object",
       "properties": {
         "uid": {
@@ -56,6 +65,10 @@
         "reviewQueue": {
           "type": "object",
           "description": "Map of failed exerciseId to consecutive correct count (0 or 1; removed at 2)."
+        },
+        "oralRatings": {
+          "type": "object",
+          "description": "Map of oralQuestionId to self-evaluated readiness level ('low', 'mid', or 'high')."
         },
         "streak": {
           "type": "integer",

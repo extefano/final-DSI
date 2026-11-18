@@ -45,10 +45,12 @@ service cloud.firestore {
           'unitId',
           'exerciseIndex',
           'sessionCorrect',
-          'sessionTotal'
+          'sessionTotal',
+          'oralMode',
+          'oralQueueIds'
         ])
         && session.view is string
-        && session.view in ['units', 'study', 'review']
+        && session.view in ['units', 'study', 'review', 'oral']
         && session.unitId is string
         && session.unitId.size() <= 32
         && session.unitId.matches('^[a-zA-Z0-9_\\-]*$')
@@ -62,7 +64,13 @@ service cloud.firestore {
         && session.sessionTotal is int
         && session.sessionTotal >= 0
         && session.sessionTotal <= 500
-        && session.sessionCorrect <= session.sessionTotal;
+        && session.sessionCorrect <= session.sessionTotal
+        && (!('oralMode' in session) || (session.oralMode is string && session.oralMode in ['mixed', 'weak', 'traps']))
+        && (!('oralQueueIds' in session) || (
+          session.oralQueueIds is list
+          && session.oralQueueIds.size() <= 100
+          && (session.oralQueueIds.size() == 0 || (session.oralQueueIds[0] is string && session.oralQueueIds[0].size() <= 64))
+        ));
     }
 
     function isValidUserProgress(data, userId) {
@@ -83,6 +91,7 @@ service cloud.firestore {
           'uid',
           'completedIds',
           'reviewQueue',
+          'oralRatings',
           'streak',
           'bestStreak',
           'totalAttempts',
@@ -101,6 +110,7 @@ service cloud.firestore {
         && (data.completedIds.size() == 0 || (data.completedIds[0] is string && data.completedIds[0].size() <= 64))
         && data.reviewQueue is map
         && data.reviewQueue.size() <= 300
+        && (!('oralRatings' in data) || (data.oralRatings is map && data.oralRatings.size() <= 200))
         && data.streak is int
         && data.streak >= 0
         && data.streak <= 100000
@@ -139,6 +149,7 @@ service cloud.firestore {
         && incoming().diff(existing()).affectedKeys().hasOnly([
           'completedIds',
           'reviewQueue',
+          'oralRatings',
           'streak',
           'bestStreak',
           'totalAttempts',

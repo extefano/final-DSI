@@ -5,8 +5,9 @@ interface NavbarProps {
   theme: ThemeMode;
   onToggleTheme: () => void;
   onOpenSyncModal: () => void;
-  activeView: 'units' | 'review' | 'study';
+  activeView: 'units' | 'review' | 'study' | 'oral';
   onSelectUnits: () => void;
+  onSelectOral: () => void;
   onStartReview: () => void;
   reviewCount: number;
 }
@@ -17,17 +18,18 @@ export function Navbar({
   onOpenSyncModal,
   activeView,
   onSelectUnits,
+  onSelectOral,
   onStartReview,
   reviewCount,
 }: NavbarProps) {
   return (
     <header className="sticky top-0 z-30 h-14 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-md">
-      <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-8 px-4 sm:px-6">
+      <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-3 sm:gap-8 px-3 sm:px-6">
         {/* Zone 1: Single-line brand wordmark */}
         <button
           type="button"
           onClick={onSelectUnits}
-          className="font-display text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-md px-1"
+          className="font-display text-base sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-md px-1"
         >
           Estudio DSI
         </button>
@@ -35,7 +37,7 @@ export function Navbar({
         {/* Zone 2: Concise single-line navigation links */}
         <nav
           aria-label="Navegación principal"
-          className="flex items-center gap-4 sm:gap-6 text-sm font-semibold"
+          className="flex items-center gap-3 sm:gap-6 text-xs sm:text-sm font-semibold"
         >
           <button
             type="button"
@@ -47,6 +49,18 @@ export function Navbar({
             }`}
           >
             Unidades
+          </button>
+          <button
+            type="button"
+            onClick={onSelectOral}
+            className={`whitespace-nowrap shrink-0 py-1 border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm ${
+              activeView === 'oral'
+                ? 'border-blue-500 text-blue-700 dark:text-blue-400'
+                : 'border-transparent text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <span className="sm:hidden">Oral</span>
+            <span className="hidden sm:inline">Simulacro Oral</span>
           </button>
           <button
             type="button"
