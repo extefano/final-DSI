@@ -6,22 +6,26 @@ import { StudySessionView } from './components/StudySessionView';
 import { UnitCatalogView } from './components/UnitCatalogView';
 import { useInputMode } from './hooks/useInputMode';
 import { useCloudSync } from './hooks/useCloudSync';
-import { useProgress } from './hooks/useProgress';
+import {
+  DEFAULT_ACTIVE_SESSION,
+  sanitizeActiveSession,
+  useProgress,
+} from './hooks/useProgress';
 import { useTheme } from './hooks/useTheme';
 import type {
+  ActiveStudySession,
   CatalogIndex,
   Exercise,
   ProgressState,
   ThemeMode,
-  UnitCatalogItem,
   UnitData,
 } from './types/dsi';
 import { decodeSessionCode } from './utils/sessionCodec';
 
-type ActiveRoute =
-  | { view: 'units' }
-  | { view: 'study'; unit: UnitCatalogItem }
-  | { view: 'review' };
+interface DisplayedView {
+  view: 'units' | 'study' | 'review';
+  unitId: string | null;
+}
 
 export default function App() {
   const { theme, toggleTheme, setTheme } = useTheme();
@@ -32,6 +36,7 @@ export default function App() {
     progress,
     reviewIds,
     recordOutcome,
+    setActiveSession,
     replaceProgress,
     resetProgress,
     switchProfile,
@@ -39,9 +44,26 @@ export default function App() {
     deleteProfile,
   } = useProgress();
 
+  const savedSession = useMemo(
+    () => sanitizeActiveSession(progress.activeSession),
+    [progress.activeSession]
+  );
+
+  const [displayedView, setDisplayedView] = useState<DisplayedView>(() => ({
+    view: savedSession.view,
+    unitId: savedSession.unitId,
+  }));
+  const [syncVersion, setSyncVersion] = useState(0);
+
   const handleApplyCloudState = useCallback(
     (cloudProgress: ProgressState, cloudTheme?: ThemeMode) => {
-      replaceProgress(cloudProgress);
+      const next = replaceProgress(cloudProgress);
+      const nextSession = sanitizeActiveSession(next.activeSession);
+      setDisplayedView({
+        view: nextSession.view,
+        unitId: nextSession.unitId,
+      });
+      setSyncVersion((v) => v + 1);
       if (cloudTheme) setTheme(cloudTheme);
     },
     [replaceProgress, setTheme]
@@ -64,7 +86,6 @@ export default function App() {
   const [unitsCache, setUnitsCache] = useState<Record<string, UnitData>>({});
   const [loadingCatalog, setLoadingCatalog] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [route, setRoute] = useState<ActiveRoute>({ view: 'units' });
   const [syncModalOpen, setSyncModalOpen] = useState(false);
 
   // Incoming #s=DSI-... hash prompt
@@ -125,6 +146,17 @@ export default function App() {
     });
   }, []);
 
+  // Keep displayedView synced if the user switches local profiles
+  useEffect(() => {
+    const profileSession = sanitizeActiveSession(activeProfile.progress.activeSession);
+    setDisplayedView({
+      view: profileSession.view,
+      unitId: profileSession.unitId,
+    });
+    setSyncVersion((v) => v + 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeProfile.id]);
+
   const unitExerciseIdsMap = useMemo(() => {
     const map: Record<string, string[]> = {};
     for (const [unitId, unitData] of Object.entries(unitsCache)) {
@@ -154,13 +186,56 @@ export default function App() {
       .filter((ex): ex is Exercise => Boolean(ex));
   }, [reviewIds, allExercisesMap]);
 
-  const handleRecordOutcome = useCallback(
-    (exerciseId: string, isCorrect: boolean) => {
-      const nextProgress = recordOutcome(exerciseId, isCorrect);
+  const navigateAndPersist = useCallback(
+    (nextSession: ActiveStudySession) => {
+      const clean = sanitizeActiveSession(nextSession);
+      setDisplayedView({ view: clean.view, unitId: clean.unitId });
+      const nextProgress = setActiveSession(clean);
       void pushProgressToCloud(nextProgress, theme);
     },
-    [recordOutcome, pushProgressToCloud, theme]
+    [setActiveSession, pushProgressToCloud, theme]
   );
+
+  const handleRecordOutcome = useCallback(
+    (
+      exerciseId: string,
+      isCorrect: boolean,
+      nextIndex: number,
+      nextStats: { correct: number; total: number }
+    ) => {
+      const nextSession: ActiveStudySession = {
+        view: displayedView.view,
+        unitId: displayedView.unitId,
+        exerciseIndex: nextIndex,
+        sessionCorrect: nextStats.correct,
+        sessionTotal: nextStats.total,
+      };
+      const nextProgress = recordOutcome(exerciseId, isCorrect, nextSession);
+      void pushProgressToCloud(nextProgress, theme);
+    },
+    [displayedView, recordOutcome, pushProgressToCloud, theme]
+  );
+
+  const handleStepSession = useCallback(
+    (nextIndex: number, nextStats: { correct: number; total: number }) => {
+      const nextSession: ActiveStudySession = {
+        view: displayedView.view,
+        unitId: displayedView.unitId,
+        exerciseIndex: nextIndex,
+        sessionCorrect: nextStats.correct,
+        sessionTotal: nextStats.total,
+      };
+      const nextProgress = setActiveSession(nextSession);
+      void pushProgressToCloud(nextProgress, theme);
+    },
+    [displayedView, setActiveSession, pushProgressToCloud, theme]
+  );
+
+  const handleFinishSession = useCallback(() => {
+    // Clear persisted checkpoint to Home while keeping summary screen visible until exit
+    const nextProgress = setActiveSession({ ...DEFAULT_ACTIVE_SESSION });
+    void pushProgressToCloud(nextProgress, theme);
+  }, [setActiveSession, pushProgressToCloud, theme]);
 
   const handleToggleTheme = useCallback(() => {
     const nextTheme: ThemeMode = theme === 'dark' ? 'light' : 'dark';
@@ -171,6 +246,12 @@ export default function App() {
   const handleImportState = useCallback(
     (incoming: ProgressState, incomingTheme?: ThemeMode) => {
       const nextProgress = replaceProgress(incoming);
+      const nextSession = sanitizeActiveSession(nextProgress.activeSession);
+      setDisplayedView({
+        view: nextSession.view,
+        unitId: nextSession.unitId,
+      });
+      setSyncVersion((v) => v + 1);
       const nextTheme = incomingTheme ?? theme;
       if (incomingTheme) setTheme(incomingTheme);
       void pushProgressToCloud(nextProgress, nextTheme);
@@ -180,6 +261,8 @@ export default function App() {
 
   const handleResetProgress = useCallback(() => {
     const nextProgress = resetProgress();
+    setDisplayedView({ view: 'units', unitId: null });
+    setSyncVersion((v) => v + 1);
     void pushProgressToCloud(nextProgress, theme);
   }, [resetProgress, pushProgressToCloud, theme]);
 
@@ -200,8 +283,27 @@ export default function App() {
     window.history.replaceState(null, '', window.location.pathname + window.location.search);
   };
 
-  const activeNavView =
-    route.view === 'review' ? 'review' : route.view === 'study' ? 'study' : 'units';
+  const activeUnit = useMemo(() => {
+    if (displayedView.view !== 'study' || !displayedView.unitId || !catalog) {
+      return null;
+    }
+    return catalog.units.find((u) => u.unitId === displayedView.unitId) ?? null;
+  }, [displayedView, catalog]);
+
+  const resolvedView: 'units' | 'study' | 'review' =
+    displayedView.view === 'study' && activeUnit
+      ? 'study'
+      : displayedView.view === 'review'
+        ? 'review'
+        : 'units';
+
+  const initialSessionStats = useMemo(
+    () => ({
+      correct: savedSession.sessionCorrect,
+      total: savedSession.sessionTotal,
+    }),
+    [savedSession.sessionCorrect, savedSession.sessionTotal]
+  );
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-[#0B1120] dark:text-slate-100 transition-colors">
@@ -209,9 +311,19 @@ export default function App() {
         theme={theme}
         onToggleTheme={handleToggleTheme}
         onOpenSyncModal={() => setSyncModalOpen(true)}
-        activeView={activeNavView}
-        onSelectUnits={() => setRoute({ view: 'units' })}
-        onStartReview={() => setRoute({ view: 'review' })}
+        activeView={resolvedView}
+        onSelectUnits={() =>
+          navigateAndPersist({ ...DEFAULT_ACTIVE_SESSION })
+        }
+        onStartReview={() =>
+          navigateAndPersist({
+            view: 'review',
+            unitId: null,
+            exerciseIndex: 0,
+            sessionCorrect: 0,
+            sessionTotal: 0,
+          })
+        }
         reviewCount={reviewIds.length}
       />
 
@@ -284,7 +396,7 @@ export default function App() {
             </button>
           </div>
         </main>
-      ) : route.view === 'units' ? (
+      ) : resolvedView === 'units' ? (
         <UnitCatalogView
           units={catalog.units}
           unitExerciseIdsMap={unitExerciseIdsMap}
@@ -295,20 +407,49 @@ export default function App() {
           cloudSyncing={cloudSyncing}
           onSignInGoogle={() => void signInWithGoogle()}
           onOpenProfiles={() => setSyncModalOpen(true)}
-          onStartUnit={(unit) => setRoute({ view: 'study', unit })}
-          onStartReview={() => setRoute({ view: 'review' })}
+          onStartUnit={(unit, resumeIndex) =>
+            navigateAndPersist({
+              view: 'study',
+              unitId: unit.unitId,
+              exerciseIndex: resumeIndex,
+              sessionCorrect: 0,
+              sessionTotal: 0,
+            })
+          }
+          onStartReview={() =>
+            navigateAndPersist({
+              view: 'review',
+              unitId: null,
+              exerciseIndex: 0,
+              sessionCorrect: 0,
+              sessionTotal: 0,
+            })
+          }
         />
-      ) : route.view === 'study' ? (
+      ) : resolvedView === 'study' && activeUnit ? (
         <StudySessionView
-          key={`unit_${route.unit.unitId}`}
-          title={route.unit.title}
+          key={`unit_${activeUnit.unitId}`}
+          title={activeUnit.title}
           isReviewMode={false}
-          exercises={unitsCache[route.unit.unitId]?.exercises ?? []}
+          exercises={unitsCache[activeUnit.unitId]?.exercises ?? []}
           isMobileOrTouch={isMobileOrTouch}
           progress={progress}
+          initialIndex={savedSession.exerciseIndex}
+          initialStats={initialSessionStats}
+          syncVersion={syncVersion}
           onOutcome={handleRecordOutcome}
-          onExit={() => setRoute({ view: 'units' })}
-          onJumpToReview={() => setRoute({ view: 'review' })}
+          onStepSession={handleStepSession}
+          onFinishSession={handleFinishSession}
+          onExit={() => navigateAndPersist({ ...DEFAULT_ACTIVE_SESSION })}
+          onJumpToReview={() =>
+            navigateAndPersist({
+              view: 'review',
+              unitId: null,
+              exerciseIndex: 0,
+              sessionCorrect: 0,
+              sessionTotal: 0,
+            })
+          }
         />
       ) : (
         <StudySessionView
@@ -318,9 +459,22 @@ export default function App() {
           exercises={reviewExercises}
           isMobileOrTouch={isMobileOrTouch}
           progress={progress}
+          initialIndex={savedSession.exerciseIndex}
+          initialStats={initialSessionStats}
+          syncVersion={syncVersion}
           onOutcome={handleRecordOutcome}
-          onExit={() => setRoute({ view: 'units' })}
-          onJumpToReview={() => setRoute({ view: 'review' })}
+          onStepSession={handleStepSession}
+          onFinishSession={handleFinishSession}
+          onExit={() => navigateAndPersist({ ...DEFAULT_ACTIVE_SESSION })}
+          onJumpToReview={() =>
+            navigateAndPersist({
+              view: 'review',
+              unitId: null,
+              exerciseIndex: 0,
+              sessionCorrect: 0,
+              sessionTotal: 0,
+            })
+          }
         />
       )}
 

@@ -31,6 +31,40 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
+    function isValidActiveSession(session) {
+      return session is map
+        && session.keys().hasAll([
+          'view',
+          'unitId',
+          'exerciseIndex',
+          'sessionCorrect',
+          'sessionTotal'
+        ])
+        && session.keys().hasOnly([
+          'view',
+          'unitId',
+          'exerciseIndex',
+          'sessionCorrect',
+          'sessionTotal'
+        ])
+        && session.view is string
+        && session.view in ['units', 'study', 'review']
+        && session.unitId is string
+        && session.unitId.size() <= 32
+        && session.unitId.matches('^[a-zA-Z0-9_\\-]*$')
+        && (session.view != 'study' || session.unitId.size() >= 1)
+        && session.exerciseIndex is int
+        && session.exerciseIndex >= 0
+        && session.exerciseIndex <= 500
+        && session.sessionCorrect is int
+        && session.sessionCorrect >= 0
+        && session.sessionCorrect <= 500
+        && session.sessionTotal is int
+        && session.sessionTotal >= 0
+        && session.sessionTotal <= 500
+        && session.sessionCorrect <= session.sessionTotal;
+    }
+
     function isValidUserProgress(data, userId) {
       return data.keys().hasAll([
           'uid',
@@ -41,6 +75,7 @@ service cloud.firestore {
           'totalAttempts',
           'totalCorrect',
           'theme',
+          'activeSession',
           'createdAt',
           'updatedAt'
         ])
@@ -53,6 +88,7 @@ service cloud.firestore {
           'totalAttempts',
           'totalCorrect',
           'theme',
+          'activeSession',
           'createdAt',
           'updatedAt'
         ])
@@ -79,6 +115,7 @@ service cloud.firestore {
         && data.totalCorrect <= data.totalAttempts
         && data.theme is string
         && data.theme in ['light', 'dark']
+        && isValidActiveSession(data.activeSession)
         && data.createdAt is timestamp
         && data.updatedAt is timestamp;
     }
@@ -107,6 +144,7 @@ service cloud.firestore {
           'totalAttempts',
           'totalCorrect',
           'theme',
+          'activeSession',
           'updatedAt'
         ]);
       allow delete: if isValidId(userId) && isOwner(userId) && isVerified();

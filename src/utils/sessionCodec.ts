@@ -9,6 +9,7 @@ interface CompactSessionPayload {
   a: number; // totalAttempts
   ok: number; // totalCorrect
   t?: ThemeMode;
+  l?: [string, string, number, number, number]; // [view, unitId, exerciseIndex, sessionCorrect, sessionTotal]
 }
 
 const CODE_PREFIX = 'DSI-';
@@ -62,6 +63,7 @@ export async function encodeSessionCode(
   progress: ProgressState,
   theme: ThemeMode
 ): Promise<string> {
+  const loc = progress.activeSession;
   const payload: CompactSessionPayload = {
     v: 1,
     c: progress.completedIds,
@@ -71,6 +73,17 @@ export async function encodeSessionCode(
     a: progress.totalAttempts,
     ok: progress.totalCorrect,
     t: theme,
+    ...(loc && loc.view !== 'units'
+      ? {
+          l: [
+            loc.view,
+            loc.unitId ?? '',
+            loc.exerciseIndex,
+            loc.sessionCorrect,
+            loc.sessionTotal,
+          ],
+        }
+      : {}),
   };
 
   const json = JSON.stringify(payload);
@@ -153,6 +166,18 @@ export async function decodeSessionCode(rawInput: string): Promise<
       }
     }
 
+    const rawLoc = Array.isArray(parsed.l) ? parsed.l : null;
+    const activeSession =
+      rawLoc && (rawLoc[0] === 'study' || rawLoc[0] === 'review' || rawLoc[0] === 'units')
+        ? {
+            view: rawLoc[0] as 'units' | 'study' | 'review',
+            unitId: typeof rawLoc[1] === 'string' && rawLoc[1] ? rawLoc[1] : null,
+            exerciseIndex: typeof rawLoc[2] === 'number' && rawLoc[2] >= 0 ? Math.floor(rawLoc[2]) : 0,
+            sessionCorrect: typeof rawLoc[3] === 'number' && rawLoc[3] >= 0 ? Math.floor(rawLoc[3]) : 0,
+            sessionTotal: typeof rawLoc[4] === 'number' && rawLoc[4] >= 0 ? Math.floor(rawLoc[4]) : 0,
+          }
+        : undefined;
+
     return {
       ok: true,
       progress: {
@@ -162,6 +187,7 @@ export async function decodeSessionCode(rawInput: string): Promise<
         bestStreak: typeof parsed.b === 'number' && parsed.b >= 0 ? parsed.b : 0,
         totalAttempts: typeof parsed.a === 'number' && parsed.a >= 0 ? parsed.a : 0,
         totalCorrect: typeof parsed.ok === 'number' && parsed.ok >= 0 ? parsed.ok : 0,
+        ...(activeSession ? { activeSession } : {}),
         lastUpdated: Date.now(),
       },
       theme: parsed.t === 'dark' || parsed.t === 'light' ? parsed.t : undefined,

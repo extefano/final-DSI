@@ -12,7 +12,7 @@ interface UnitCatalogViewProps {
   cloudSyncing: boolean;
   onSignInGoogle: () => void;
   onOpenProfiles: () => void;
-  onStartUnit: (unit: UnitCatalogItem) => void;
+  onStartUnit: (unit: UnitCatalogItem, resumeIndex: number) => void;
   onStartReview: () => void;
 }
 
@@ -245,6 +245,11 @@ export function UnitCatalogView({
             const total = ids.length || unit.exerciseCount;
             const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
             const isMastered = total > 0 && doneCount === total;
+            const firstPendingIdx = ids.findIndex((id) => !completedSet.has(id));
+            const resumeIndex =
+              doneCount > 0 && doneCount < total && firstPendingIdx >= 0
+                ? firstPendingIdx
+                : 0;
             const accent = ACCENT_STYLES[unit.accentColor] ?? ACCENT_STYLES.emerald;
 
             return (
@@ -293,7 +298,7 @@ export function UnitCatalogView({
 
                   <button
                     type="button"
-                    onClick={() => onStartUnit(unit)}
+                    onClick={() => onStartUnit(unit, resumeIndex)}
                     className={`duo-btn flex min-h-[46px] w-full items-center justify-center gap-2 rounded-xl border-2 border-b-4 px-4 text-sm font-bold whitespace-nowrap ${accent.btn}`}
                   >
                     <span>{doneCount > 0 ? 'Seguir practicando' : 'Comenzar unidad'}</span>

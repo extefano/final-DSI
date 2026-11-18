@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -19,7 +19,20 @@ interface StudySessionViewProps {
   exercises: Exercise[];
   isMobileOrTouch: boolean;
   progress: ProgressState;
-  onOutcome: (exerciseId: string, isCorrect: boolean) => void;
+  initialIndex: number;
+  initialStats: { correct: number; total: number };
+  syncVersion: number;
+  onOutcome: (
+    exerciseId: string,
+    isCorrect: boolean,
+    nextIndex: number,
+    nextStats: { correct: number; total: number }
+  ) => void;
+  onStepSession: (
+    nextIndex: number,
+    nextStats: { correct: number; total: number }
+  ) => void;
+  onFinishSession: () => void;
   onExit: () => void;
   onJumpToReview: () => void;
 }
@@ -30,11 +43,26 @@ export function StudySessionView({
   exercises,
   isMobileOrTouch,
   progress,
+  initialIndex,
+  initialStats,
+  syncVersion,
   onOutcome,
+  onStepSession,
+  onFinishSession,
   onExit,
   onJumpToReview,
 }: StudySessionViewProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // Keep review round list stable while the user progresses through a round
+  const [reviewSnapshot, setReviewSnapshot] = useState<Exercise[]>(() =>
+    isReviewMode ? exercises : []
+  );
+  const activeExercises = isReviewMode ? reviewSnapshot : exercises;
+
+  const [currentIndex, setCurrentIndex] = useState(() =>
+    activeExercises.length > 0
+      ? Math.min(Math.max(0, initialIndex), activeExercises.length - 1)
+      : 0
+  );
   const [canSubmit, setCanSubmit] = useState(false);
   const [submitSignal, setSubmitSignal] = useState(0);
   const [checked, setChecked] = useState(false);
@@ -42,10 +70,37 @@ export function StudySessionView({
     isCorrect: boolean;
     summary: string;
   } | null>(null);
-  const [sessionStats, setSessionStats] = useState({ correct: 0, total: 0 });
+  const [sessionStats, setSessionStats] = useState(initialStats);
   const [finished, setFinished] = useState(false);
 
-  const currentExercise = exercises[currentIndex];
+  // Sync position/stats when a cloud snapshot, profile switch, or session code import arrives
+  useEffect(() => {
+    if (syncVersion === 0) return;
+    const list = isReviewMode ? exercises : activeExercises;
+    if (isReviewMode) {
+      setReviewSnapshot(exercises);
+    }
+    const nextSafe =
+      list.length > 0 ? Math.min(Math.max(0, initialIndex), list.length - 1) : 0;
+    setSessionStats(initialStats);
+    setCurrentIndex((prev) => {
+      if (prev !== nextSafe) {
+        setChecked(false);
+        setFeedback(null);
+        setCanSubmit(false);
+        setSubmitSignal(0);
+        setFinished(false);
+      }
+      return nextSafe;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [syncVersion]);
+
+  const safeIndex =
+    activeExercises.length > 0
+      ? Math.min(Math.max(0, currentIndex), activeExercises.length - 1)
+      : 0;
+  const currentExercise = activeExercises[safeIndex];
 
   const handleResultReady = useCallback((ready: boolean) => {
     setCanSubmit(ready);
@@ -54,15 +109,26 @@ export function StudySessionView({
   const handleEvaluate = useCallback(
     (isCorrect: boolean, expectedSummary: string) => {
       if (!currentExercise || checked) return;
+      const nextStats = {
+        correct: sessionStats.correct + (isCorrect ? 1 : 0),
+        total: sessionStats.total + 1,
+      };
+      const savedIndex =
+        safeIndex + 1 < activeExercises.length ? safeIndex + 1 : safeIndex;
+
       setChecked(true);
       setFeedback({ isCorrect, summary: expectedSummary });
-      setSessionStats((prev) => ({
-        correct: prev.correct + (isCorrect ? 1 : 0),
-        total: prev.total + 1,
-      }));
-      onOutcome(currentExercise.id, isCorrect);
+      setSessionStats(nextStats);
+      onOutcome(currentExercise.id, isCorrect, savedIndex, nextStats);
     },
-    [currentExercise, checked, onOutcome]
+    [
+      currentExercise,
+      checked,
+      sessionStats,
+      safeIndex,
+      activeExercises.length,
+      onOutcome,
+    ]
   );
 
   const handleTriggerCheck = () => {
@@ -71,18 +137,21 @@ export function StudySessionView({
   };
 
   const handleNext = () => {
-    if (currentIndex + 1 >= exercises.length) {
+    if (safeIndex + 1 >= activeExercises.length) {
       setFinished(true);
+      onFinishSession();
       return;
     }
-    setCurrentIndex((i) => i + 1);
+    const nextIdx = safeIndex + 1;
+    setCurrentIndex(nextIdx);
     setChecked(false);
     setFeedback(null);
     setCanSubmit(false);
     setSubmitSignal(0);
+    onStepSession(nextIdx, sessionStats);
   };
 
-  if (exercises.length === 0) {
+  if (activeExercises.length === 0 || !currentExercise) {
     return (
       <main className="mx-auto max-w-2xl px-4 py-12 text-center space-y-5">
         <div className="rounded-3xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 space-y-4">
@@ -182,7 +251,7 @@ export function StudySessionView({
   }
 
   const progressPct = Math.round(
-    ((currentIndex + (checked ? 1 : 0)) / exercises.length) * 100
+    ((safeIndex + (checked ? 1 : 0)) / activeExercises.length) * 100
   );
   const reviewHits = progress.reviewQueue[currentExercise.id];
 
@@ -204,7 +273,7 @@ export function StudySessionView({
             <div className="flex items-center justify-between text-xs font-semibold text-slate-600 dark:text-slate-300">
               <span className="truncate max-w-[200px] sm:max-w-sm">{title}</span>
               <span className="font-mono tabular-nums">
-                {currentIndex + 1} / {exercises.length}
+                {safeIndex + 1} / {activeExercises.length}
               </span>
             </div>
             <div className="h-3 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
@@ -353,7 +422,7 @@ export function StudySessionView({
               }`}
             >
               <span>
-                {currentIndex + 1 >= exercises.length ? 'Finalizar' : 'Continuar'}
+                {safeIndex + 1 >= activeExercises.length ? 'Finalizar' : 'Continuar'}
               </span>
               <ArrowRight className="h-4 w-4" />
             </button>

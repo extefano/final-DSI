@@ -19,12 +19,24 @@ import {
   googleProvider,
   handleFirestoreError,
 } from '../firebase';
-import type { ProgressState, ThemeMode } from '../types/dsi';
+import type { ActiveStudySession, ProgressState, ThemeMode } from '../types/dsi';
+import { sanitizeActiveSession } from './useProgress';
 
 interface CloudSyncOptions {
   localProgress: ProgressState;
   theme: ThemeMode;
   onApplyCloudState: (progress: ProgressState, theme?: ThemeMode) => void;
+}
+
+function clampActiveSessionForCloud(session?: ActiveStudySession) {
+  const clean = sanitizeActiveSession(session);
+  return {
+    view: clean.view,
+    unitId: clean.view === 'study' && clean.unitId ? clean.unitId : '',
+    exerciseIndex: clean.exerciseIndex,
+    sessionCorrect: clean.sessionCorrect,
+    sessionTotal: clean.sessionTotal,
+  };
 }
 
 function clampPayload(progress: ProgressState, theme: ThemeMode) {
@@ -65,6 +77,7 @@ function clampPayload(progress: ProgressState, theme: ThemeMode) {
     totalAttempts,
     totalCorrect,
     theme: theme === 'dark' ? 'dark' : 'light',
+    activeSession: clampActiveSessionForCloud(progress.activeSession),
   } as const;
 }
 
@@ -179,6 +192,11 @@ export function useCloudSync({
         }
 
         const data = snap.data();
+        const cloudUpdatedMs =
+          data.updatedAt && typeof data.updatedAt.toMillis === 'function'
+            ? (data.updatedAt.toMillis() as number)
+            : Date.now();
+
         const cloudProgress: ProgressState = {
           completedIds: Array.isArray(data.completedIds) ? data.completedIds : [],
           reviewQueue:
@@ -189,7 +207,8 @@ export function useCloudSync({
           bestStreak: typeof data.bestStreak === 'number' ? data.bestStreak : 0,
           totalAttempts: typeof data.totalAttempts === 'number' ? data.totalAttempts : 0,
           totalCorrect: typeof data.totalCorrect === 'number' ? data.totalCorrect : 0,
-          lastUpdated: Date.now(),
+          activeSession: sanitizeActiveSession(data.activeSession),
+          lastUpdated: cloudUpdatedMs,
         };
         const cloudTheme: ThemeMode | undefined =
           data.theme === 'dark' || data.theme === 'light' ? data.theme : undefined;
@@ -213,6 +232,14 @@ export function useCloudSync({
               Math.max(cloudProgress.totalCorrect, local.totalCorrect),
               mergedAttempts
             );
+            const localSession = sanitizeActiveSession(local.activeSession);
+            const cloudSession = sanitizeActiveSession(cloudProgress.activeSession);
+            const chosenSession =
+              cloudSession.view !== 'units' &&
+              (cloudUpdatedMs >= local.lastUpdated || localSession.view === 'units')
+                ? cloudSession
+                : localSession;
+
             const merged: ProgressState = {
               completedIds: mergedIds,
               reviewQueue: { ...cloudProgress.reviewQueue, ...local.reviewQueue },
@@ -220,11 +247,23 @@ export function useCloudSync({
               bestStreak: Math.max(cloudProgress.bestStreak, local.bestStreak),
               totalAttempts: mergedAttempts,
               totalCorrect: mergedCorrect,
+              activeSession: chosenSession,
               lastUpdated: Date.now(),
             };
-            // Remove already-completed items only if they reached 2 hits; preserve pending queue cleanly
             onApplyRef.current(merged, cloudTheme);
             void pushProgressToCloud(merged, cloudTheme ?? themeRef.current);
+            return;
+          }
+
+          // Upgrade legacy cloud documents that do not have activeSession yet
+          if (!data.activeSession) {
+            const localSession = sanitizeActiveSession(local.activeSession);
+            const upgraded: ProgressState = {
+              ...cloudProgress,
+              activeSession: localSession,
+            };
+            onApplyRef.current(upgraded, cloudTheme);
+            void pushProgressToCloud(upgraded, cloudTheme ?? themeRef.current);
             return;
           }
         }

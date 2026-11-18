@@ -190,6 +190,7 @@ export function SessionModal({
               typeof candidate.totalAttempts === 'number' ? candidate.totalAttempts : 0,
             totalCorrect:
               typeof candidate.totalCorrect === 'number' ? candidate.totalCorrect : 0,
+            ...(candidate.activeSession ? { activeSession: candidate.activeSession } : {}),
             lastUpdated: Date.now(),
           },
           parsed.theme === 'dark' || parsed.theme === 'light' ? parsed.theme : undefined

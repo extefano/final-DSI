@@ -94,6 +94,14 @@ export interface CatalogIndex {
 
 export type ThemeMode = 'light' | 'dark';
 
+export interface ActiveStudySession {
+  view: 'units' | 'study' | 'review';
+  unitId: string | null;
+  exerciseIndex: number;
+  sessionCorrect: number;
+  sessionTotal: number;
+}
+
 export interface ProgressState {
   completedIds: string[];
   /** Map from exerciseId -> consecutive correct count in review queue (0 or 1; 2 removes it) */
@@ -102,6 +110,7 @@ export interface ProgressState {
   bestStreak: number;
   totalAttempts: number;
   totalCorrect: number;
+  activeSession?: ActiveStudySession;
   lastUpdated: number;
 }
 

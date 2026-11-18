@@ -1,8 +1,45 @@
 {
   "entities": {
+    "ActiveSession": {
+      "title": "ActiveSession",
+      "description": "Tracks the student's current view, active unit, exercise index, and session counters for automatic reload and cross-device resume.",
+      "type": "object",
+      "properties": {
+        "view": {
+          "type": "string",
+          "enum": ["units", "study", "review"],
+          "description": "Current active screen in Estudio DSI."
+        },
+        "unitId": {
+          "type": "string",
+          "description": "Identifier of the active unit when view is study, or empty string otherwise.",
+          "maxLength": 32,
+          "pattern": "^[a-zA-Z0-9_\\-]*$"
+        },
+        "exerciseIndex": {
+          "type": "integer",
+          "description": "Zero-based index of the current exercise within the unit or review session."
+        },
+        "sessionCorrect": {
+          "type": "integer",
+          "description": "Number of correct answers in the active session."
+        },
+        "sessionTotal": {
+          "type": "integer",
+          "description": "Total number of evaluated answers in the active session."
+        }
+      },
+      "required": [
+        "view",
+        "unitId",
+        "exerciseIndex",
+        "sessionCorrect",
+        "sessionTotal"
+      ]
+    },
     "UserProgress": {
       "title": "UserProgress",
-      "description": "Cloud-synced study progress, error review queue, and streak metrics for a single authenticated student.",
+      "description": "Cloud-synced study progress, error review queue, active session location, and streak metrics for a single authenticated student.",
       "type": "object",
       "properties": {
         "uid": {
@@ -41,6 +78,10 @@
           "enum": ["light", "dark"],
           "description": "Preferred UI color theme."
         },
+        "activeSession": {
+          "$ref": "#/entities/ActiveSession",
+          "description": "Current study session checkpoint for seamless reload and cross-device resume."
+        },
         "createdAt": {
           "type": "string",
           "format": "date-time",
@@ -61,6 +102,7 @@
         "totalAttempts",
         "totalCorrect",
         "theme",
+        "activeSession",
         "createdAt",
         "updatedAt"
       ]
@@ -69,7 +111,7 @@
   "firestore": {
     "/users/{userId}": {
       "schema": { "$ref": "#/entities/UserProgress" },
-      "description": "Stores isolated per-student study progress synchronized automatically across devices."
+      "description": "Stores isolated per-student study progress and active session checkpoint synchronized automatically across devices."
     }
   }
 }

@@ -1,8 +1,54 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ProgressState, StudyProfile } from '../types/dsi';
+import type { ActiveStudySession, ProgressState, StudyProfile } from '../types/dsi';
 
 const LEGACY_PROGRESS_KEY = 'estudio_dsi_progress_v1';
 const PROFILES_STORAGE_KEY = 'estudio_dsi_profiles_v1';
+
+export const DEFAULT_ACTIVE_SESSION: ActiveStudySession = {
+  view: 'units',
+  unitId: null,
+  exerciseIndex: 0,
+  sessionCorrect: 0,
+  sessionTotal: 0,
+};
+
+export function sanitizeActiveSession(raw: unknown): ActiveStudySession {
+  if (!raw || typeof raw !== 'object') {
+    return { ...DEFAULT_ACTIVE_SESSION };
+  }
+  const s = raw as Partial<ActiveStudySession>;
+  const rawView =
+    s.view === 'study' || s.view === 'review' || s.view === 'units'
+      ? s.view
+      : 'units';
+  const rawUnitId =
+    typeof s.unitId === 'string' && /^[a-zA-Z0-9_-]{1,32}$/.test(s.unitId)
+      ? s.unitId
+      : null;
+
+  const view = rawView === 'study' && !rawUnitId ? 'units' : rawView;
+  const unitId = view === 'study' ? rawUnitId : null;
+  const exerciseIndex =
+    typeof s.exerciseIndex === 'number' && Number.isFinite(s.exerciseIndex)
+      ? Math.min(Math.max(0, Math.floor(s.exerciseIndex)), 500)
+      : 0;
+  const sessionTotal =
+    typeof s.sessionTotal === 'number' && Number.isFinite(s.sessionTotal)
+      ? Math.min(Math.max(0, Math.floor(s.sessionTotal)), 500)
+      : 0;
+  const sessionCorrect =
+    typeof s.sessionCorrect === 'number' && Number.isFinite(s.sessionCorrect)
+      ? Math.min(Math.max(0, Math.floor(s.sessionCorrect)), sessionTotal)
+      : 0;
+
+  return {
+    view,
+    unitId,
+    exerciseIndex,
+    sessionCorrect,
+    sessionTotal,
+  };
+}
 
 const createEmptyProgress = (): ProgressState => ({
   completedIds: [],
@@ -11,6 +57,7 @@ const createEmptyProgress = (): ProgressState => ({
   bestStreak: 0,
   totalAttempts: 0,
   totalCorrect: 0,
+  activeSession: { ...DEFAULT_ACTIVE_SESSION },
   lastUpdated: Date.now(),
 });
 
@@ -32,6 +79,7 @@ function sanitizeProgress(raw: unknown): ProgressState {
     bestStreak: typeof parsed.bestStreak === 'number' ? parsed.bestStreak : 0,
     totalAttempts: typeof parsed.totalAttempts === 'number' ? parsed.totalAttempts : 0,
     totalCorrect: typeof parsed.totalCorrect === 'number' ? parsed.totalCorrect : 0,
+    activeSession: sanitizeActiveSession(parsed.activeSession),
     lastUpdated: typeof parsed.lastUpdated === 'number' ? parsed.lastUpdated : Date.now(),
   };
 }
@@ -125,7 +173,11 @@ export function useProgress() {
   );
 
   const recordOutcome = useCallback(
-    (exerciseId: string, isCorrect: boolean): ProgressState => {
+    (
+      exerciseId: string,
+      isCorrect: boolean,
+      nextSession?: ActiveStudySession
+    ): ProgressState => {
       return updateActiveProgress((prev) => {
         const nextCompleted = new Set(prev.completedIds);
         const nextReview = { ...prev.reviewQueue };
@@ -159,9 +211,24 @@ export function useProgress() {
           bestStreak: nextBestStreak,
           totalAttempts: prev.totalAttempts + 1,
           totalCorrect: prev.totalCorrect + (isCorrect ? 1 : 0),
+          activeSession: nextSession
+            ? sanitizeActiveSession(nextSession)
+            : sanitizeActiveSession(prev.activeSession),
           lastUpdated: Date.now(),
         };
       });
+    },
+    [updateActiveProgress]
+  );
+
+  const setActiveSession = useCallback(
+    (session: ActiveStudySession): ProgressState => {
+      const cleanSession = sanitizeActiveSession(session);
+      return updateActiveProgress((prev) => ({
+        ...prev,
+        activeSession: cleanSession,
+        lastUpdated: Date.now(),
+      }));
     },
     [updateActiveProgress]
   );
@@ -170,6 +237,7 @@ export function useProgress() {
     (incoming: ProgressState): ProgressState => {
       return updateActiveProgress(() => ({
         ...incoming,
+        activeSession: sanitizeActiveSession(incoming.activeSession),
         lastUpdated: Date.now(),
       }));
     },
@@ -199,7 +267,11 @@ export function useProgress() {
             id: newId,
             name: cleanName,
             progress: initialProgress
-              ? { ...initialProgress, lastUpdated: Date.now() }
+              ? {
+                  ...initialProgress,
+                  activeSession: sanitizeActiveSession(initialProgress.activeSession),
+                  lastUpdated: Date.now(),
+                }
               : createEmptyProgress(),
           },
         ],
@@ -241,6 +313,7 @@ export function useProgress() {
     progress,
     reviewIds,
     recordOutcome,
+    setActiveSession,
     replaceProgress,
     resetProgress,
     switchProfile,
